@@ -1,0 +1,3 @@
+[submodule "cornflakes"]
+	path = cornflakes
+	url = https://github.com/deeptir18/cornflakes.git
