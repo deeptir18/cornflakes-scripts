@@ -1,0 +1,42 @@
+dpdk:
+    eal_init: ["-n", "4", "-a", "0000:41:00.0,txq_inline_mpw=256,txqs_min_inline=0","--proc-type=auto"]
+    pci_addr: "0000:41:00.0" ## run sudo ethtool -i iface_name to find pci_addr
+    port: 0 ## either 1 or 0 depending on which port is configured for the
+    experiment interface
+mlx5:
+    pci_addr: "0000:41:00.0"
+
+lwip:
+  known_hosts:
+    "XX:XX:XX:XX:XX:XX": 192.168.1.1 # cornflakes-server
+    "XX:XX:XX:XX:XX:XX": 192.168.1.2 # cornflakes-client1
+
+port: 54323 # for the server
+client_port: 12345
+
+host_types:
+  server: ["server"]
+  client: ["client1"]
+
+hosts:
+    server:
+        addr: 128.110.219.136 # IP for ssh
+        ip: 192.168.1.1
+        mac: "XX:XX:XX:XX:XX:XX" # should match above
+        tmp_folder: "/mydata/$USER/cornflakes_tmp
+        cornflakes_dir: "/mydata/$USER/cornflakes"
+        config_file: "/mydata/config/cluster_config.yaml"
+
+    client1:
+        addr: 128.110.219.126 # IP for ssh
+        ip: 192.168.1.2
+        mac: "XX:XX:XX:XX:XX:XX"
+        tmp_folder: "/mydata/$USER/cornflakes_tmp
+        cornflakes_dir: "/mydata/$USER/cornflakes"
+        config_file: "/mydata/config/cluster_config.yaml"
+    
+cornflakes_dir: /mydata/$USER/cornflakes
+max_clients: 1 #  2 for 2 clients.
+user: $USER
+config_file: /mydata/$USER/config/cluster_config.yaml
+

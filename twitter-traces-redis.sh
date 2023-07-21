@@ -7,8 +7,8 @@ exit 1
 fi
 
 python3 /mydata/$GENIUSER/cornflakes/experiments/twitter-bench.py -e loop \
-    -f /mydata/$GENIUSER/expdata/twitter_cfkv \
+    -f /mydata/$GENIUSER/expdata/twitter_redis \
     -c /mydata/$GENIUSER/config/cluster_config.yaml \
-    -ec /mydata/$GENIUSER/cornflakes/cf-kv/twitter.yaml \
-    -lc /mydata/$GENIUSER/cornflakes/experiments/yamls/loopingparams/twitter_traces/cf-kv-twitter.yaml \
+    -ec /mydata/$GENIUSER/cornflakes/experiments/yamls/cmdlines/redis-twitter.yaml \
+    -lc /mydata/$GENIUSER/cornflakes/experiments/yamls/loopingparams/twitter_traces/cf-kv-twitter-redis.yaml \
     --trace /mydata/$GENIUSER/data/twitter/cluster4.0_subset

@@ -1,5 +1,5 @@
 # cornflakes-scripts
-This repository contains scripts to run and reproduce from the SOSP paper,
+This repository contains scripts to run and reproduce results from the SOSP paper,
 Cornflakes: Zero-Copy Serialization for Microsecond-Scale Networking,
 conditionally accepted at SOSP 2023, on Cloudlab.
 The scripts in this repository assume you have setup machines
@@ -29,17 +29,27 @@ cornflakes
 ## Hardware
 ## Profile
 ## Configuring machine after experiment instantiation.
-1. After the cloudlab experiment summary indicates the initialization scripts have
-finished running, please log into each of the server and client nodes and run the
-following. Note that `$USER` refers to your cloudlab username.
+0. After the cloudlab UI indicates that the startup scripts have _finished_
+   running, please reboot (power cycle) each of the machines. This loads the newly installed
+Mellanox drivers.
+1. After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
+following (on all nodes). Note that `$USER` refers to your cloudlab username.
 ```
+## clone and build cornflakes (output should indicate a git clone and
+## compilation of the code)
+## after this script runs:
+## cornflakes is at /mydata/$USER/cornflakes
+## cornflakes-scripts is at /mydata/$USER/cornflakes-scripts
+/local/repository/clone_cornflakes.sh
+
 ## installs hugetlbfs
 sudo /mydata/$USER/cornflakes/install/install-hugepages.sh 7500
-## turns of any turboboost related settings by enabling a constant frequency
+## disables c-states
 sudo /mydata/$USER/cornflakes/install/set_freq.sh
 ```
 2. To run any cornflakes experiments, Cornflakes requires a config file that
-   looks like the following. Please fill in at `/mydata/$USER/config/cluster_config.yaml`
+   looks like the following. Please fill in at
+`/mydata/$USER/config/cluster_config.yaml`; this is a [sample config](sample_config.md)
    - PCI address && hardware interface: 
         1. [Server] ssh into the server and run `ifconfig`. See which interface
            name matches the assigned ip 192.168.1.1. For d6525-100g machines,
@@ -47,7 +57,7 @@ sudo /mydata/$USER/cornflakes/install/set_freq.sh
            1) was used. The corresponding ethernet hardware address is the one
            we want.
         2. [Client] ssh into the client and run `ifconfig`. See which interface
-           name matches the assigned ip 192.168.1.1. For d6525-100g machines,
+           name matches the assigned ip 192.168.1.2 (or higher for more clients). For d6525-100g machines,
            this is likely ens1f0np0 or ens1f0np1 depending on which port (0 or
         3. Given an interface name, run `sudo ethtool -i <iface_name> to find
            the PCI address.
@@ -77,81 +87,103 @@ sudo /mydata/$USER/cornflakes/install/set_freq.sh
     - Replace `$USER` with your username.
     - If there is more than 1 client, add `client2`, `client3`... to
       `host_types[client]` and change `max_clients` to the number of clients.
-```
-# # Copyright (c) Microsoft Corporation.
-# # Licensed under the MIT license.
-
-dpdk:
-    eal_init: ["-n", "4", "-a", "0000:41:00.0,txq_inline_mpw=256,txqs_min_inline=0","--proc-type=auto"]
-    pci_addr: "0000:41:00.0" ## run sudo ethtool -i iface_name to find pci_addr
-    port: 0 ## either 1 or 0 depending on which port is configured for the
-    experiment interface
-mlx5:
-    pci_addr: "0000:41:00.0"
-
-lwip:
-  known_hosts:
-    "XX:XX:XX:XX:XX:XX": 192.168.1.1 # cornflakes-server
-    "XX:XX:XX:XX:XX:XX": 192.168.1.2 # cornflakes-client1
-
-port: 54323 # for the server
-client_port: 12345
-
-host_types:
-  server: ["server"]
-  client: ["client1"]
-
-hosts:
-    server:
-        addr: 128.110.219.136 # IP for ssh
-        ip: 192.168.1.1
-        mac: "XX:XX:XX:XX:XX:XX" # should match above
-        tmp_folder: "/mydata/$USER/cornflakes_tmp
-        cornflakes_dir: "/mydata/$USER/cornflakes"
-        config_file: "/mydata/config/cluster_config.yaml"
-
-    client1:
-        addr: 128.110.219.126 # IP for ssh
-        ip: 192.168.1.2
-        mac: "XX:XX:XX:XX:XX:XX"
-        tmp_folder: "/mydata/$USER/cornflakes_tmp
-        cornflakes_dir: "/mydata/$USER/cornflakes"
-        config_file: "/mydata/config/cluster_config.yaml"
-    
-cornflakes_dir: /mydata/$USER/cornflakes
-max_clients: 1 #  2 for 2 clients.
-user: $USER
-config_file: /mydata/$USER/config/cluster_config.yaml
-```
 
 # Results reproduced overview
-We have provided instructions to reproduce results for all experiments described
-in the paper except for Figure 9 (TCP integration), Figure 10 (Intel vs.
-mellanox NICs) and Figure 13 (scalability). The Intel vs. mellanox NIC
-experiment was performed on a private cluster that others cannot access; Cloudlab does not have the Intel NICs we used. However, we provide
-instructions in the [Cornflakes readme](https://github.com/deeptir18/cornflakes)
-for getting started with Intel NICs. The TCP server integration code is available [here](https://github.com/deeptir18/demikernel/tree/cornflakes); however, this code has a completely different setup (it runs atop Demikernel and uses a different,[TCP load generator](https://github.com/sansri264/tcp_generator)).
-We provide some instructions for Figure 13, but they use a different version
-of the microbenchmark code, so requires a few more manual steps.
+## Main results reproduced
+We have provided instructions to reproduce Figure 8, Figure 7, Figure 12, and
+part of Figure 5.
+Figure 8 (Redis integration with the twitter trace) and Figure 7 (comparison to
+existing libraries on the twitter trace) show Cornflakes provides gains compared
+to existing software serialization approaches, even in a highly optimized custom
+system like Redis. Figure 12 shows that the hybrid approach offers some gain.
+The portion of Figure 5 validates our current threshold choice of 512; the full
+heatmap takes days to run (but we provide instructions for that as well).
+
+## Optional results 
+We have also provided scripts to run the experiments described in Table 2 (CDN
+workload), and Figure 6 (the google workload), but we believe the results listed
+above constitute the core resuls of the paper.
+
+## How results work
+For each figure, we have provided a bash script that invokes the python script
+necessary to run the experiment described. The form of the bash-script is
+roughly the following (the trace related arguments depending on the specific
+experiment).
+```
+python3 $PATH_TO_CORNFLAKES/experiments/xx-bench.py -e loop \
+    -f $PATH_TO_RESULTS \
+    -c $PATH_TO_CLUSTER_CONFIG \
+    -ec $PATH_TO_CORNFLAKES/path_to_command_line_yaml \
+    -lc $PATH_TO_EXPERIMENT_LOOP \
+    --trace <trace_file>
+```
+Here is information about each parameter. Note that if you choose to change the
+location of the cluster config file from what the cloudlab profile setup, or the
+Cornflakes repo, please change the corresponding bash script.
+- The `$PATH_TO_CLUSTER_CONFIG` is hardcoded in each script to
+`/mydata/$USER/config/cluster_config.yaml`; this is where the setup instructions
+above specified the yaml should be.
+- `$PATH_TO_RESULTS` is hardcoded to `/mydata/$USER/expdata/<expname>`
+- `$PATH_TO_CORNFLAKES` is hardcoded to `/mydata/$USER/cornflakes`. If cornflakes
+  is at a different location, please change this substitution.
+- `-ec` argument: Each program has a yaml that specifies the command line (for both the server and client) specified by the `-ec` argument that shows how the binary is run. This is hardcoded to a path inside the Cornflakes repo.
+- `-lc` argument: This specifies the parameters that will be looped over for the
+  particular experiment (e.g., the exact parameters to load the experiment, and
+exact rates to use in the throughput latency curve).
 
 # Hello world example (~2-3 minutes)
 
 # Reproducing results.
-## Figure 2 (serialization throughput today)
-### Time
+## Figure 8 (Redis comparison over twitter traces)
+### Experiment time overview.
+This script takes about 5-6 hours to run. It runs two throughput latency curves
+(Cornflakes serialization and Redis serialization inside Redis) of 39 points
+each; each point runs for about 30 seconds; however, the server loads the values
+into memory for each point causing each trial to take closer to two minutes.
 
 ### Instructions
+```
+## ssh into the server node on cloudlab
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts
+./twitter-traces-redis.sh
+```
+
+### Initial expected outputs
 
 
 ### Expected output location
+| Figure | Filepath |
+| --- | ----------- |
+| Figure 8 |`/mydata/$USER/expdata/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 
-## Figure 3 (scatter-gather microbenchmark)
+
+## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
 ### Time
+This script takes around 14-15 hours to run.
+It runs 6 throughput latency curves (Protobuf, Flatbuffers, Capnproto,
+Cornflakes, and Cornflakes configured to only copy or only zero-copy); each
+curve consists of about 40 throughput latency points and produces both the
+baselines comparison results and hybrid comparison result.
 
 ### Instructions
+```
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts
+./twitter-traces-cfkv.sh
+```
+
+### Initial expected outputs
 
 
 ### Expected output location
+| Figure | Filepath |
+| --- | ----------- |
+| Figure 7 (comparing baselines) |`mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
+| Figure 12 (hybrid comparison) |`mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/thresholdvary_p99_cr.pdf` |
+
+To see median latency graph, replace `p99` with `median` in any of the graph
+paths (these were not reported in the paper).
 
 ## Figure 5 (threshold heatmap)
 ### Time
@@ -160,60 +192,16 @@ of the microbenchmark code, so requires a few more manual steps.
 
 ### Expected output location
 
-## Table 1, Figure 6, Table 4 (custom kv store with google trace)
-### Time
-
-### Instructions
-
-
-### Expected output location
-*Table 1*
-
-*Figure 6*
-
-*Table 4*
-
-## Figure 7, Figure 12 (custom kv store with twitter trace)
+## Figure 6 (custom kv store with google trace, optional)
 ### Time
 
 ### Instructions
 
 ### Expected output location
 
-## Figure 8 (redis with twitter trace)
+## Table 2 (CDN trace, optional)
 ### Time
 
 ### Instructions
 
 ### Expected output location
-
-## Table 3 (redis with ycsb traces)
-### Time
-
-### Instructions
-
-### Expected output location
-
-## Table 5 (combined serialize and send, optional)
-### Time
-
-### Instructions
-
-### Expected output location
-*Google trace*
-
-*Twitter trace*
-
-*YCSB trace*
-
-## Figure 11 (cycles breakdown, optional)
-
-## Figure 13 (scalability, optional)
-### Time
-
-### Instructions
-
-### Expected output location
-
-
-
