@@ -335,4 +335,10 @@ cd /mydata/$USER/cornflakes-scripts
 ```
 
 ### Expected output location
+The python script calculates the highest achieved load across all offered loads
+for each system; you can use the `format-cdn.sh` bash script in the
+`cornflakes-scripts` repo to format the log.
+| Figure | Filepath | Format Command |
+| --- | ----------- | -------------- |
+ Table 2 | `/mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log` | `/mydata/$USER/cornflakes-scripts/format-cdn.sh /mydata/$USER//expdata/cdn_cfkv/latencies-postprocess.log`
 
