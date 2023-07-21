@@ -199,11 +199,32 @@ above specified the yaml should be.
   particular experiment (e.g., the exact parameters to load the experiment, and
 exact rates to use in the throughput latency curve).
 
+## Known Issues
+### Expected time estimates in script output is wrong
+The python scripts themselves print out the number of trials that will be run,
+current percentage done, and expected time.
+The "expected time" estimate is likely slightly wrong (instead, see the times we
+list along with each experiment), especially if you restart
+the experiment in the middle and it picks up again midway through.
+These estimates were used while developing to schedule/plan out experiments
+better.
+
+### "Failed to ssh due to not being able to open file descriptor"
+For the longer running experiments (more than a few hours), the python scripts sometimes fail to ssh and stop running.
+The error is due to the script not being able to open file descriptors
+transiently for the ssh connections.
+Increasing the allowed number of file descriptors on the server machine with `ulimit -n 1048576` should
+help.
+If the script stopped, you can restart it and it will pick off where
+it left off.
+Note that once you restart, the expected time estimates printed inside the
+script may be off.
+
 # Hello world example (~2-3 minutes)
 
 # Reproducing results.
 ## Figure 8 (Redis comparison over twitter traces)
-### Experiment time overview.
+### Experiment time overview (5-6 hours compute, 2-3 min human).
 This script takes about 5-6 hours to run. It runs two throughput latency curves
 (Cornflakes serialization and Redis serialization inside Redis) of 39 points
 each; each point runs for about 30 seconds; however, the server loads the values
@@ -214,6 +235,7 @@ into memory for each point causing each trial to take closer to two minutes.
 ## ssh into the server node on cloudlab
 ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts
+## run inside tmux or screen
 ./twitter-traces-redis.sh
 ```
 
@@ -230,7 +252,7 @@ paths (these were not reported in the paper).
 
 
 ## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
-### Time
+### Experiment Time (14-15 hours compute, 2-3 min human time)
 This script takes around 14-15 hours to run.
 It runs 6 throughput latency curves (Protobuf, Flatbuffers, Capnproto,
 Cornflakes, and Cornflakes configured to only copy or only zero-copy); each
@@ -241,6 +263,7 @@ baselines comparison results and hybrid comparison result.
 ```
 ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts
+## run inside tmux or screen
 ./twitter-traces-cfkv.sh
 ```
 
@@ -256,22 +279,52 @@ cd /mydata/$USER/cornflakes-scripts
 To see median latency graph, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
 
-## Figure 5 (threshold heatmap)
-### Time
+## Figure 5 Partial (threshold heatmap)
+### Experiment Time (23-24 hours compute, 2-3 min human time)
+This script takes almost a full day. It runs the datapoints required to compute
+the `1024` and `2048` vertical columns of the heatmap in Figure 5 and validates
+the threshold choice of 512; all vertical
+columns would take a few more days.
+
 
 ### Instructions
+```
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts
+## run inside tmux or screen
+./mmtstudy.sh
+```
 
 ### Expected output location
+| Figure | Filepath |
+| --- | ----------- |
+| Figure 5 subset|`/mydata/$USER/expdata/threshold_heatmap/plots/heatmap_anon.pdf` |
+
+### Running the entire Figure 5 (optional)
+If you are interested in recreating the entire Figure 5, modify `mmtstudy.sh`
+so the `-lc` argument takes in `-lc /mydata/$GENIUSER/cornflakes-scripts/yamls/fig5.yaml`;
+this yaml specifies the iterations for recreating the entire heatmap.
 
 ## Figure 6 (custom kv store with google trace, optional)
-### Time
+### Experiment Time (3 hours compute, 2-3 min human time)
+This experiment runs the custom kv store with the google trace on the software
+baselines; it just does the version where the values are lists of 1-8 elements.
 
 ### Instructions
+```
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts
+## run inside tmux or screen
+./google-traces.sh
+```
 
 ### Expected output location
+| Figure | Filepath |
+| --- | ----------- |
+| Figure 6 |`googleproto_cfkv/plots/max_num_values_8/total_num_keys_1000000/key_size_64/distribution_exponential/baselines_p99_cr.pdf`|
 
 ## Table 2 (CDN trace, optional)
-### Time
+### Experiment Time (3 hours compute, 2-3 min human time)
 
 ### Instructions
 
