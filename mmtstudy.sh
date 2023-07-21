@@ -13,4 +13,3 @@ python3 /mydata/$GENIUSER/cornflakes/experiments/cf-kv-bench.py -e loop \
     -lt /mydata/$GENIUSER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.load \
     -qt /mydata/$GENIUSER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.access \
     -lc /mydata/$GENIUSER/cornflakes-scripts/yamls/fig5partial.yaml
-

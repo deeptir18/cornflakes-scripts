@@ -174,7 +174,8 @@ above constitute the core resuls of the paper.
 
 ## How results work
 For each figure, we have provided a bash script that invokes the python script
-necessary to run the experiment described. The form of the bash script is
+necessary to run the experiment described, which hardcodes locations of
+cornflakes and the config files to what the cloudlab profile setup. The form of the bash script is
 roughly the following (the trace related arguments depends on the specific
 experiment).
 ```
@@ -185,19 +186,18 @@ python3 $PATH_TO_CORNFLAKES/experiments/xx-bench.py -e loop \
     -lc $PATH_TO_EXPERIMENT_LOOP \
     --trace <trace_file>
 ```
-Here is information about each parameter. Note that if you choose to change the
-location of the cluster config file from what the cloudlab profile setup, or the
-Cornflakes repo, please change the paths in the corresponding bash script.
-- The `$PATH_TO_CLUSTER_CONFIG` is hardcoded in each script to
-`/mydata/$USER/config/cluster_config.yaml`; this is where the setup instructions
-above specified the yaml should be.
-- `$PATH_TO_RESULTS` is hardcoded to `/mydata/$USER/expdata/<expname>`
-- `$PATH_TO_CORNFLAKES` is hardcoded to `/mydata/$USER/cornflakes`. If cornflakes
-  is at a different location, please change this substitution.
-- `-ec` argument: Each program has a yaml that specifies the command line (for both the server and client) specified by the `-ec` argument that shows how the binary is run. This is hardcoded to a path inside the Cornflakes repo.
+Here is information about each parameter. We briefly describe what changing each
+would do:
+- `$PATH_TO_CLUSTER_CONFIG`: changes the location to the machine's cluster
+  config.
+- `$PATH_TO_RESULTS`: changes where the expected results for the experiment end
+  up.
+- `$PATH_TO_CORNFLAKES`: where the cornflakes repo is located.
+- `-ec` argument: Each program has a yaml that specifies the command line (for both the server and client) specified by the `-ec` argument that shows how the binary is run. This should not be changed; it is hardcoded to a location inside the cornflakes repo.
 - `-lc` argument: This specifies the parameters that will be looped over for the
   particular experiment (e.g., the exact parameters to load the experiment, and
-exact rates to use in the throughput latency curve).
+exact rates to use in the throughput latency curve). Changing this changes the
+parameters the experiment will run over.
 
 ## Known Issues
 ### Expected time estimates in script output is wrong
@@ -312,8 +312,8 @@ baselines; it just does the version where the values are lists of 1-8 elements.
 
 ### Instructions
 ```
-ssh $USER@cornflakes-server-IP
-cd /mydata/$USER/cornflakes-scripts
+ssh $user@cornflakes-server-ip
+cd /mydata/$user/cornflakes-scripts
 ## run inside tmux or screen
 ./google-traces.sh
 ```
@@ -327,5 +327,12 @@ cd /mydata/$USER/cornflakes-scripts
 ### Experiment Time (3 hours compute, 2-3 min human time)
 
 ### Instructions
+```
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts
+## run inside tmux or screen
+./cdn-traces.sh
+```
 
 ### Expected output location
+
