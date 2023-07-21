@@ -14,20 +14,55 @@ The end of the README (as well as the main Cornflakes repository) contains
 instructions for how to get started with Cornflakes on your own hardware.
 
 # Code version and structure
-This repository assumes (cornflakes)[https://github.com/deeptir18/cornflakes], on the main branch, at XXXX commit hash,
-and the cloudlab profile pointing to (this repository)[https://github.com/deeptir18/cornflakes-cloudlab-profile/] at main and XXXX commit hash. We briefly describe the code structure of Cornflakes below (TODO)
+This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at XXXX commit hash,
+and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and XXXX commit hash.
+We briefly describe the code structure of Cornflakes below.
 ```
 cornflakes
     - cf-kv:  source code for kv store application
-    - cornflakes-codegen: boilerplate for generating 
-    - cornflakes-libos: common serialization and datapath code
+    - redis: redis submodule with changes to redis
+    - cornflakes-codegen: boilerplate for generating Rust serialization code
+    - cornflakes-libos: common serialization and datapath interface code
     - cornflakes-utils: common utilities for running binaries
+    - mlx5-datapath: custom datapath built on Mellanox OFED drivers.
+    - ice-datapath: custom datapath built on Intel Ice drivers.
+    - dpdk-datapath: interface to datapath over DPDK (mainly used for client
+      load generators).
 ```
 
 # Cloudlab profile instructions (1 hour machine time, 15 minutes human time)
+We have provided a [cloudlab profile](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec) that automaticaly installs and configures
+most of what is needed to run Cornflakes (there is some configuration that must
+be done once the install scripts finish).
 ## Dataset
+The cloudlab dataset is at
+`urn:publicid:IDN+utah.cloudlab.us:demeter-pg0+ltdataset+cornflakes-data`; this
+is in the Utah cluster; the default argument in the Cloudlab profile points to
+this dataset.
 ## Hardware
+To run the evaluation, you MUST use a cluster with either d6515, or c6525-100g, or c6525-25g
+nodes in the Cloudlab Utah cluster (the dataset containing the traces is located
+on the Utah cluster); we highly recommend c6525-100g.
+We tested using c6525-100g machines; if you use
+c6525-25g machines you may see different results (lower raw throughputs), because the network bandwidth
+is lower.
+
 ## Profile
+The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch.
+To use the profile:
+0. Press "instantiate".
+1. Choose values for parameters: the dataset value already points to the dataset
+   described above; choose the machine type; and choose the number of clients.
+All results below just require 1 client. Please click the dropdown for
+`advanced` and click the checkbox next to `No Interswitch Links` (this ensures
+there is only one switch between the client and server machine). A screenshot
+using the c6525-100g machines, and 1 client is shown below:
+![Alt text](cloudlab_params.png)
+
+2. On the next page, enter a name for the experiment, and select `Cloudlab Utah`
+   in the dropdown menu.
+![Alt text](cloudlab_topo.png)
+2. 
 ## Configuring machine after experiment instantiation.
 0. After the cloudlab UI indicates that the startup scripts have _finished_
    running, please reboot (power cycle) each of the machines. This loads the newly installed
@@ -35,21 +70,30 @@ Mellanox drivers.
 1. After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
 following (on all nodes). Note that `$USER` refers to your cloudlab username.
 ```
-## clone and build cornflakes (output should indicate a git clone and
-## compilation of the code)
-## after this script runs:
-## cornflakes is at /mydata/$USER/cornflakes
-## cornflakes-scripts is at /mydata/$USER/cornflakes-scripts
+## clone and build cornflakes
 /local/repository/clone_cornflakes.sh
+```
+After this, on all machines, you will see the following repos at the following
+locations:
+| Repo | Location |
+| --- | ----------- |
+| cornflakes | `/mydata/$USER/cornflakes` |
+| cornflakes-scripts | `/mydata/$USER/cornflakes-scripts` |
+| cornflakes-cloudlab-profile | `/local/repository` |
 
+2. Machine settings. On each machine, log in and run the following:
+```
 ## installs hugetlbfs
 sudo /mydata/$USER/cornflakes/install/install-hugepages.sh 7500
 ## disables c-states
 sudo /mydata/$USER/cornflakes/install/set_freq.sh
 ```
-2. To run any cornflakes experiments, Cornflakes requires a config file that
-   looks like the following. Please fill in at
-`/mydata/$USER/config/cluster_config.yaml`; this is a [sample config](sample_config.md)
+
+
+3. Configure config file. To run any cornflakes experiments, Cornflakes requires a config file that
+   looks like [sample config](sample_config.md). Please fill in at
+`/mydata/$USER/config/cluster_config.yaml`; this is the location that all the
+scripts expect.
    - PCI address && hardware interface: 
         1. [Server] ssh into the server and run `ifconfig`. See which interface
            name matches the assigned ip 192.168.1.1. For d6525-100g machines,
@@ -94,8 +138,7 @@ We have provided instructions to reproduce Figure 8, Figure 7, Figure 12, and
 part of Figure 5.
 Figure 8 (Redis integration with the twitter trace) and Figure 7 (comparison to
 existing libraries on the twitter trace) show Cornflakes provides gains compared
-to existing software serialization approaches, even in a highly optimized custom
-system like Redis. Figure 12 shows that the hybrid approach offers some gain.
+to existing software serialization approaches. Figure 12 shows that the hybrid approach offers some gain.
 The portion of Figure 5 validates our current threshold choice of 512; the full
 heatmap takes days to run (but we provide instructions for that as well).
 
@@ -106,8 +149,8 @@ above constitute the core resuls of the paper.
 
 ## How results work
 For each figure, we have provided a bash script that invokes the python script
-necessary to run the experiment described. The form of the bash-script is
-roughly the following (the trace related arguments depending on the specific
+necessary to run the experiment described. The form of the bash script is
+roughly the following (the trace related arguments depends on the specific
 experiment).
 ```
 python3 $PATH_TO_CORNFLAKES/experiments/xx-bench.py -e loop \
@@ -119,7 +162,7 @@ python3 $PATH_TO_CORNFLAKES/experiments/xx-bench.py -e loop \
 ```
 Here is information about each parameter. Note that if you choose to change the
 location of the cluster config file from what the cloudlab profile setup, or the
-Cornflakes repo, please change the corresponding bash script.
+Cornflakes repo, please change the paths in the corresponding bash script.
 - The `$PATH_TO_CLUSTER_CONFIG` is hardcoded in each script to
 `/mydata/$USER/config/cluster_config.yaml`; this is where the setup instructions
 above specified the yaml should be.
@@ -156,6 +199,9 @@ cd /mydata/$USER/cornflakes-scripts
 | Figure | Filepath |
 | --- | ----------- |
 | Figure 8 |`/mydata/$USER/expdata/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
+
+To see median latency graph, replace `p99` with `median` in any of the graph
+paths (these were not reported in the paper).
 
 
 ## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
