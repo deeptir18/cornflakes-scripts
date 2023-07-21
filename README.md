@@ -30,7 +30,7 @@ cornflakes
       load generators).
 ```
 
-# Cloudlab profile instructions (1 hour machine time, 15 minutes human time)
+# Cloudlab profile instructions (1 hour machine time, 15-20 minutes human time)
 We have provided a [cloudlab profile](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec) that automaticaly installs and configures
 most of what is needed to run Cornflakes (there is some configuration that must
 be done once the install scripts finish).
@@ -48,9 +48,12 @@ c6525-25g machines you may see different results (lower raw throughputs), becaus
 is lower.
 
 ## Profile
-The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch.
+The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again.
+
 To use the profile:
+
 0. Press "instantiate".
+
 1. Choose values for parameters: the dataset value already points to the dataset
    described above; choose the machine type; and choose the number of clients.
 All results below just require 1 client. Please click the dropdown for
@@ -62,12 +65,26 @@ using the c6525-100g machines, and 1 client is shown below:
 2. On the next page, enter a name for the experiment, and select `Cloudlab Utah`
    in the dropdown menu.
 ![Alt text](cloudlab_topo.png)
-2. 
-## Configuring machine after experiment instantiation.
-0. After the cloudlab UI indicates that the startup scripts have _finished_
+
+3. Press next; the next page indicates if you would like to schedule the
+   experiment for later; you can skip and press "Finish" to instantiate
+immediately.
+
+4. Wait for 2-3 minutes to ensure the machines are allocated (it helps to have a
+   reservation, as c6525-100g machines are more in demand) and the profile has
+worked successfully.
+
+5. The install scripts take about 1 hour to run; they install many libraries
+   from scratch. **Wait for about 1 hour**.
+
+6. After the cloudlab UI indicates that the startup scripts have _finished_
    running, please reboot (power cycle) each of the machines. This loads the newly installed
-Mellanox drivers.
-1. After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
+Mellanox drivers. Once the cloudlab UI indicates the machines are rebooted, you
+are ready to use them for experiments!
+
+
+## Build cornflakes and configuring the machine post-reboot settings
+0. After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
 following (on all nodes). Note that `$USER` refers to your cloudlab username.
 ```
 ## clone and build cornflakes
@@ -81,9 +98,9 @@ locations:
 | cornflakes-scripts | `/mydata/$USER/cornflakes-scripts` |
 | cornflakes-cloudlab-profile | `/local/repository` |
 
-2. Machine settings. On each machine, log in and run the following:
+1. Machine settings. On each machine, log in and run the following:
 ```
-## installs hugetlbfs
+## installs hugetlbfs, required for zero-copy
 sudo /mydata/$USER/cornflakes/install/install-hugepages.sh 7500
 ## disables c-states
 sudo /mydata/$USER/cornflakes/install/set_freq.sh
