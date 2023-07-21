@@ -5,13 +5,16 @@ conditionally accepted at SOSP 2023, on Cloudlab.
 The scripts in this repository assume you have setup machines
 via the custom cloudlab-profile linked below; this profile 
 sets up Cloudlab machines with all the necessary dependencies.
-The scripts assume certain filepaths (i.e., cornflakes is located at
-/mydata/$USER/cornflakes) which the cloudlab profile sets up automatically.
+The scripts in this repo assume certain filepaths (i.e., cornflakes is located at
+/mydata/$USER/cornflakes) which the cloudlab profile sets up automatically; if
+you manually clone cornflakes into a different path, you must change the paths
+in these scripts.
 The traces used in the evaluation are located in a Cloudlab
-long-term dataset; the cloudlab profile mounts the traces on an NFS server the
-nodes have access to and copies the data to node-local storage on startup.
-The end of the README (as well as the main Cornflakes repository) contains
-instructions for how to get started with Cornflakes on your own hardware.
+long-term dataset; the cloudlab profile mounts the traces one machine and the
+setup scripts scp the traces to all machines on startup.
+The main Cornflakes repo contains
+instructions for how to get started with Cornflakes on your own hardware; this
+repo is intended for reproducing the main results.
 
 # Code version and structure
 This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at XXXX commit hash,
@@ -81,6 +84,11 @@ worked successfully.
    running, please reboot (power cycle) each of the machines. This loads the newly installed
 Mellanox drivers. Once the cloudlab UI indicates the machines are rebooted, you
 are ready to use them for experiments!
+
+7. The results we recommend reproducing take around 5, 14, and 20 hours each to
+   run. Therefore, we recommend that you extend the cloudlab experiment for a
+few days to finish the artifact evaluation; experiments automatically get
+deleted after 16 hours if you're not careful.
 
 
 ## Build cornflakes and configuring the machine post-reboot settings
