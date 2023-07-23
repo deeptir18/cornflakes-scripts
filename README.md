@@ -78,16 +78,23 @@ immediately.
 worked successfully.
 
 5. The install scripts take about 1 hour to run; they install many libraries
-   from scratch. **Wait for about 1 hour**.
+   from scratch. **Wait for about 1 hour**, until the `Startup` column on the
+   experiment page indicates the startup is finished. It will look something
+   like the following; note one machine is `cornflakes-server` machine and the
+   rest are `cornflakes-clientx`.
+![Alt text](cloudlab_status.png)
 
 6. After the cloudlab UI indicates that the startup scripts have _finished_
-   running, please reboot (power cycle) each of the machines. This loads the newly installed
-Mellanox drivers. Once the cloudlab UI indicates the machines are rebooted, you
+   running, please reboot (power cycle) each of the machines (by clicking according to the screenshot below). This loads the newly installed
+Mellanox drivers. Once the cloudlab UI indicates the machines are rebooted
+(`Status` column says `Ready`), you
 are ready to use them for experiments!
+![Alt text](cloudlab_reboot.png)
 
 7. The results we recommend reproducing take around 5, 14, and 20 hours each to
    run. Therefore, we recommend that you extend the cloudlab experiment for a
-few days to finish the artifact evaluation; experiments automatically get
+few days to finish the artifact evaluation (press extend on the experiment
+status page); experiments automatically get
 deleted after 16 hours if you're not careful.
 
 
