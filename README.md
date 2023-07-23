@@ -120,8 +120,9 @@ automatically fills in the config file; please do not change the `--outfile`
 argument of the python script, where the experiment bash scripts expect the
 config file will be located. The following table describes the environment
 variables:
+
 | Variables | Definition |
-| --- | ----------- |
+| ---------------- | ------------------------------------------------------------ |
 | `$NUM_CLIENTS` | Number of clients configured in cloudlab profile (e.g., machines named `cornflakes-clientx`) |
 | `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines |
 
