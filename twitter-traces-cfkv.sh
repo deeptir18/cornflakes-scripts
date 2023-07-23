@@ -10,5 +10,5 @@ python3 /mydata/$GENIUSER/cornflakes/experiments/twitter-bench.py -e loop \
     -f /mydata/$GENIUSER/expdata/twitter_cfkv \
     -c /mydata/$GENIUSER/config/cluster_config.yaml \
     -ec /mydata/$GENIUSER/cornflakes/cf-kv/twitter.yaml \
-    -lc /mydata/$GENIUSER/cornflakes/experiments/yamls/loopingparams/twitter_traces/cf-kv-twitter.yaml \
+    -lc /mydata/$GENIUSER/cornflakes-scripts/yamls/fig7and12.yaml
     --trace /mydata/$GENIUSER/data/twitter/cluster4.0_subset
