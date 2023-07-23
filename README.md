@@ -114,48 +114,26 @@ sudo /mydata/$USER/cornflakes/install/install-hugepages.sh 7500
 sudo /mydata/$USER/cornflakes/install/set_freq.sh
 ```
 
+2. Configure config file on each machine. To run any cornflakes experiments, Cornflakes requires a config file that
+   looks like [sample config](sample_config.md). The following python script
+automatically fills in the config file; please do not change the `--outfile`
+argument of the python script, where the experiment bash scripts expect the
+config file will be located. The following table describes the environment
+variables:
+| Variables | Definition |
+| --- | ----------- |
+| `$NUM_CLIENTS` | Number of clients configured in cloudlab profile (e.g., machines named `cornflakes-clientx`) |
+| `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines |
 
-3. Configure config file. To run any cornflakes experiments, Cornflakes requires a config file that
-   looks like [sample config](sample_config.md). Please fill in at
-`/mydata/$USER/config/cluster_config.yaml`; this is the location that all the
-scripts expect.
-   - PCI address && hardware interface: 
-        1. [Server] ssh into the server and run `ifconfig`. See which interface
-           name matches the assigned ip 192.168.1.1. For d6525-100g machines,
-           this is likely ens1f0np0 or ens1f0np1 depending on which port (0 or
-           1) was used. The corresponding ethernet hardware address is the one
-           we want.
-        2. [Client] ssh into the client and run `ifconfig`. See which interface
-           name matches the assigned ip 192.168.1.2 (or higher for more clients). For d6525-100g machines,
-           this is likely ens1f0np0 or ens1f0np1 depending on which port (0 or
-        3. Given an interface name, run `sudo ethtool -i <iface_name> to find
-           the PCI address.
-    - SSH IPs:
-        1. Given the DNS names of the cloudlab servers, get the IPs used to ssh
-           which the scripts require internally, e.g., by using ifconfig and
-           looking at the ssh interface or by running dig on the DNS name (e.g.,
-           `dig amdXXX@cloudlab.utah.us`).
-    - `dpdk` section of config:
-        - Replace the fourth entry of the `eal_init` section below with the PCI
-          address of that machine.
-        - Replace the `pci_addr` section with the PCI address.
-        - Replace port with 0, or 1, depending on if the interface name ends
-          with 0 or 1.
-    - `mlx5` section of the config:
-        - Replace `pci_addr` witht he pci address of the interface.
-    - `lwip` section (common to server and client configs):
-        - Replace the "XX:XX:XX..." with the ethernet address of mapping to the
-          192.168.1.1 IP on the server.
-        - For each client, do the same (client-1 is 192.168.1.2, client-2 is
-          192.168.1.3...)
-    - `hosts` section (common to server and client configs):
-        - Replace the addr field with the correct SSH ip address for each
-          machine.
-        - Replace the mac field for the correct NIC mac address for each
-          machine.
-    - Replace `$USER` with your username.
-    - If there is more than 1 client, add `client2`, `client3`... to
-      `host_types[client]` and change `max_clients` to the number of clients.
+```
+python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.py --machine $MACHINE_NAME
+```
+**Note**: If you are using d6515 machines, please ssh into one of the machines
+and check the interface name of the ssh interface (e.g., the interface listed by
+`ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xx.xx). `generate-config.py`
+hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
+interface name used by c6525-100g or 25g machines for the SSH interface; for
+d6515 machines, please change this.
 
 # Results reproduced overview
 ## Main results reproduced
