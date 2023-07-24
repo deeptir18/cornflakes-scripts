@@ -156,10 +156,17 @@ variables:
 | Variables | Definition |
 | ---------------- | ------------------------------------------------------------ |
 | `$NUM_CLIENTS` | Number of clients configured in cloudlab profile (e.g., machines named `cornflakes-clientx`) |
-| `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines; e.g., `cornflakes-client1` or `cornflakes-client2` |
+
+**Note**: If you are using d6515 machines, please ssh into one of the machines
+and check the interface name of the ssh interface (e.g., the interface listed by
+`ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xx.xx). `generate-config.py`
+hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
+interface name used by c6525-100g or 25g machines for the SSH interface; for
+d6515 machines, please change this.
+
 
 ```
-mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml --machine $MACHINE_NAME
+mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml
 ```
 The output of generate-config.yaml should look like so:
 ```
@@ -178,15 +185,9 @@ XXX.XXX.XXX.XX
   -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
-**Note**: If you are using d6515 machines, please ssh into one of the machines
-and check the interface name of the ssh interface (e.g., the interface listed by
-`ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xx.xx). `generate-config.py`
-hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
-interface name used by c6525-100g or 25g machines for the SSH interface; for
-d6515 machines, please change this.
 
-
-3. Turn on jumbo frames for the relevant interface on all machines (1 min).
+3. Turn on jumbo frames for the relevant interface on all machines (1 min) IF
+   they are not already turned on.
 
 Note from the output of the `generate-config.py` step above, the output that
 looks like the following. This is saying the IP address, mac address, pci address and
@@ -203,6 +204,17 @@ machine)
 # for each machine
 ssh $USER@machine
 sudo ip link set dev $INTERFACE mtu 9000
+```
+
+4. Check ping-ability from client to server machines and vice versa. If this is
+   not working, please power cycle the machines again and before doing anything
+   else, ensure this works.
+```
+ssh $USER@cornflakes-server
+ping 192.168.1.2 # ctrl-c if works
+## you have more than 1 client
+ping 192.168.1.3
+## ... and so on.
 ```
 
 # Results reproduced overview
