@@ -154,11 +154,11 @@ XXX.XXX.XXX.XX
   -> [XXX.XXX.XXX.XX]       bash -c "ifconfig | grep -B1 \"192.168.1.1\" | awk '{print $first}'"
   -> [XXX.XXX.XXX.XX]       bash -c "ifconfig ens1f1np1 | grep 'ether'"
   -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f1np1 | grep 'bus-info'"
-==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: 0c:42:a1:e2:a7:95, pci: 0000:41:00.1, port: 1
+==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.1, port: 1
   -> [XXX.XXX.XXX.XX]       bash -c "ifconfig | grep -B1 \"192.168.1.2\" | awk '{print $first}'"
   -> [XXX.XXX.XXX.XX]       bash -c "ifconfig ens1f0np0 | grep 'ether'"
   -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
-==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: 0c:42:a1:dd:5a:14, pci: 0000:41:00.0, port: 0
+==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
 **Note**: If you are using d6515 machines, please ssh into one of the machines
 and check the interface name of the ssh interface (e.g., the interface listed by
@@ -174,8 +174,8 @@ Note from the output of the `generate-config.py` step above, the output that
 looks like the following. This is saying the IP address, mac address, pci address and
 interface name for the experiment interface on each machine.
 ```
-==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: 0c:42:a1:e2:a7:95, pci: 0000:41:00.1, port: 1
-==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: 0c:42:a1:dd:5a:14, pci: 0000:41:00.0, port: 0
+==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.1, port: 1
+==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
 
 On all machines, use the interface name (`$INTERFACE` in the command below) and turn on jumbo frames for each machine (e.g.,
