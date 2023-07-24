@@ -15,6 +15,23 @@ setup scripts scp the traces to all machines on startup.
 The main Cornflakes repo contains
 instructions for how to get started with Cornflakes on your own hardware; this
 repo is intended for reproducing the main results.
+Here is an overview of the steps that lead to reproduction along with expected
+time; note you'll need access to a cloudlab account to go through these.
+Any instructions that say wait indicate you can leave it running and come back
+later.
+| Step | Expected Time |
+| ----------------------------------- | -------------------------------------------- |
+| Instantiate cloudlab cluster via cloudlab profile (active). | 4-5 minutes |
+| Wait for machines to instantiate and run install scripts (leave and come back). | 1 hour or so. |
+| Reboot each machine after installation scripts have finished running (active). | 2-3 minutes |
+| Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
+| Run hello-world example to test setup works properly (active). | 5-10 minutes |
+| Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
+| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once halfway through). |
+| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once or twice through). |
+| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once or twice through). |
+| (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
+
 
 # Code version and structure
 This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
