@@ -27,9 +27,9 @@ later.
 | Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
 | Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
-| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once halfway through). |
-| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once or twice through). |
-| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](### "Failed to ssh due to not being able to open file descriptor") once or twice through). |
+| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
+| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](###(###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
 | (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
 
 
@@ -64,8 +64,9 @@ To run the evaluation, you MUST use a cluster with either d6515, or c6525-100g, 
 nodes in the Cloudlab Utah cluster (the dataset containing the traces is located
 on the Utah cluster); we highly recommend c6525-100g.
 We tested using c6525-100g machines; if you use
-c6525-25g machines you may see different results (lower raw throughputs), because the network bandwidth
-is lower.
+c6525-25g machines (due to 100g machines not being available) you may see different results (lower raw throughputs), because the network bandwidth
+is lower; especially for the reproduction of Figure 5, where the copy-zero-copy
+tradeoff may change.
 
 ## Profile
 The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again.
@@ -256,7 +257,7 @@ the experiment in the middle and it picks up again midway through.
 These estimates were used while developing to schedule/plan out experiments
 better.
 
-### "Failed to ssh due to not being able to open file descriptor"
+### Failed to ssh due to not being able to open file descriptor
 For the longer running experiments (more than a few hours), the python scripts sometimes fail to ssh and stop running.
 The error is due to the script not being able to open file descriptors
 transiently for the ssh connections.
