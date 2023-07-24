@@ -1,0 +1,76 @@
+
+ython3 /mydata/USER/cornflakes/experiments/cf-kv-bench.py -e loop -f /mydata/USER/expdata/threshold_heatmap -c /mydata/USER/config/cluster_config.yaml -ec /mydata/USER/cornflakes/cf-kv/ycsb.yaml -lt /mydata/USER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.load -qt /mydata/USER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.access -lc /mydata/USER/cornflakes-scripts/yamls/fig5partial.yaml
+ → [DEBUG]:   Number of iterations: 960
+ → [WARN]:   Expected time to finish: 8.0 hours
+ → [DEBUG]:   Running iteration:  Iteration info: client rates: 1@2125, value size distr: size_UniformOverSizes-2048, num keys: keys_1, num values: values_1, serialization: cornflakes-dynamic, num_threads: 16, extra serialization_params: inline_mode: nothing, buf_type: hybridarenaobject, max_sg_segments: 32, copy_threshold: 0, trial: trial_0
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+  -> [XXX.XXX.XXX.XX] (bg)  screen -d -m sudo bash -c "sudo env LD_LIBRARY_PATH=/mydata/USER/cornflakes/dpdk-datapath/3rdparty/dpdk/build/lib/x86_64-linux-gnu nice -n -19 taskset -c 2 /mydata/USER/cornflakes/target/release/ycsb_mlx5 --config_file /mydata/USER/config/cluster_config.yaml --server_ip 192.168.1.1 --mode server --trace /mydata/USER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.load --debug_leve
+l info --value_size UniformOverSizes-2048 --num_values 1 --num_keys 1 --serialization cornflakes-dynamic --push_buf_type hybridarenaobject --inline_mode nothing --copy_threshold 0 --use_linked_list --ready_file /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/ready.log > /mydata/d
+eeptir/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/server.log  2> /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/server.err.log  < /dev/null "
+  -> [XXX.XXX.XXX.XX]       sudo bash -c "sudo env LD_LIBRARY_PATH=/mydata/USER/cornflakes/dpdk-datapath/3rdparty/dpdk/build/lib/x86_64-linux-gnu /mydata/USER/cornflakes/target/release/ycsb_dpdk --config_file /mydata/USER/config/cluster_config.yaml --mode client --queries /mydata/USER/data/ycsb/workloadc-1mil/workloadc-1mil-1-batched.access --debug_level warn --push_buf_type singlebuf --value_size UniformOverS
+izes-2048 --rate 2125 --serialization cornflakes1c-dynamic --server_ip 192.168.1.1 --our_ip 192.168.1.2 --time 25 --num_values 1 --num_keys 1 --num_threads 16 --num_clients 1 --client_id 0 --use_linked_list --threadlog /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.threa
+ds.log > /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.log  2> /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.err.lo
+g "
+ → [DEBUG]:   Finished running start client command
+ → [WARN]:   Program start_client on host client1 failed:
+        - stdout: Jul 23 19:04:04.818  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.827  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.834  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.843  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.850  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.858  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.867  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.875  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.882  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.891  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.899  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.908  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.915  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.923  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.929  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:04.929  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:04:30.478  WARN cornflakes_libos::loadgen::client_threads: About to print out stats for all threads
+port_id: 0, rx_rings; 16, tx_rings: 16
+res: 0
+
+        - stderr: EAL: Detected CPU lcores: 32
+EAL: Detected NUMA nodes: 1
+EAL: Auto-detected process type: PRIMARY
+EAL: Detected shared linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Probe PCI driver: mlx5_pci (15b3:1017) device: 0000:41:00.0 (socket 0)
+mlx5_common: DevX read access NIC register=0X9055 failed errno=121 status=0x3 syndrome=0x54e3a9
+mlx5_common: DevX create q counter set failed errno=121 status=0x2 syndrome=0x8975f1
+TELEMETRY: No legacy callbacks, legacy socket not created
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+Port 0 must be configured before MTU set
+Dev info MTU:1500
+
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/server.log -> localhost:/mydata/USER/expdata/threshold_heatmap/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_
+1/values_1/1@2125/16_threads/trial_0/server.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/server.err.log -> localhost:/mydata/USER/expdata/threshold_heatmap/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/k
+eys_1/values_1/1@2125/16_threads/trial_0/server.err.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.log -> localhost:/mydata/USER/expdata/threshold_heatmap/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys
+_1/values_1/1@2125/16_threads/trial_0/client1.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.err.log -> localhost:/mydata/USER/expdata/threshold_heatmap/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/
+keys_1/values_1/1@2125/16_threads/trial_0/client1.err.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2048/keys_1/values_1/1@2125/16_threads/trial_0/client1.threads.log -> localhost:/mydata/USER/expdata/threshold_heatmap/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_0/size_UniformOverSizes-2
+048/keys_1/values_1/1@2125/16_threads/trial_0/client1.threads.log### Initial expected outputs (wait ~5 minutes)
+Something like the output in the [fig 8 sample log](fig8output.log)
+should print after 5 or so minutes (the first trial will have run).

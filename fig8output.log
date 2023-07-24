@@ -1,0 +1,71 @@
+++ geni-get user_urn
+++ awk -F+ '{print $4}'
++ GENIUSER=USER
++ '[' 0 -ne 0 ']'
++ python3 /mydata/USER/cornflakes/experiments/twitter-bench.py -e loop -f /mydata/USER/expdata/twitter_redis -c /mydata/USER/config/cluster_config.yaml -ec /mydata/USER/cornflakes/experiments/yamls/cmdlines/redis-twitter.yaml -lc /mydata/USER/cornflakes-scripts/yamls/fig8.yaml --trace /mydata/USER/data/twitter/cluster4.0_subset
+ → [DEBUG]:   Number of iterations: 78
+ → [WARN]:   Expected time to finish: 0.65 hours
+ → [DEBUG]:   Running iteration:  Iteration info: trace: /mydata/USER/data/twitter/cluster4.0_subset, speed_factor: speed_factor_4.0, value_size: value_size_twitter, ignore_sets: ignore_sets_False, ignore_pps: ignore_pps_True, distribution: exponential, min_num_keys: min_num_keys_4000000, serialization: cornflakes-dynamic, num_clients: 1_clients, num_threads: 16_threads, extra serialization_params: inline_mode: nothing, buf_type: hybridarenaobject, max_sg_segments: 32, copy_threshold: 512, trial: trial_0
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+  -> [XXX.XXX.XXX.XX] (bg)  screen -d -m sudo bash -c "sudo LD_LIBRARY_PATH=/mydata/USER/cornflakes/dpdk-datapath/3rdparty/dpdk/build/lib/x86_64-linux-gnu/:/mydata/USER/cornflakes/target/release:/mydata/USER/cornflakes/cf-kv/c/kv-redis-c/target/release CONFIG_PATH=/mydata/USER/config/cluster_config.yaml RUST_BACKTRACE=full RUST_LOG=info SERVER_IP=192.168.1.1 SERIALIZATION=cornflakes-dynamic COPY_THRESHOLD=512 INLINE_MODE=nothing MIN_KEYS_TO_LOAD=4000000 TWITTER_END_TIME=5 TWITTER_TRACE=/mydata/USER/data/twitter/cluster4.0_subset READY_FILE=/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/ready.log /mydata/USER/cornflakes/redis/src/redis-server /mydata/USER/cornflakes/redis/redis.conf > /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.log  2> /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.err.log  < /dev/null "
+ → [INFO]:   Spawned clients, waiting for server ready
+  -> [XXX.XXX.XXX.XX]       sudo bash -c "sudo env LD_LIBRARY_PATH=/mydata/USER/cornflakes/dpdk-datapath/3rdparty/dpdk/build/lib/x86_64-linux-gnu /mydata/USER/cornflakes/target/release/twitter_dpdk --config_file /mydata/USER/config/cluster_config.yaml --mode client --server_ip 192.168.1.1 --our_ip 192.168.1.2 --push_buf_type singlebuf --serialization cornflakes1c-dynamic --time 30 --speed_factor 4.0 --trace /mydata/USER/data/twitter/cluster4.0_subset --ignore_pps --distribution exponential --num_threads 16 --num_clients 1 --client_id 0 --threadlog /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.threads.log --debug_level warn --per_size_info --ready_file /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.ready.log > /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.log  2> /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.err.log "
+  -> [XXX.XXX.XXX.XX]       bash -c "echo ready > /mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.ready.log "
+ → [INFO]:   Writing ready for client host client1
+ → [DEBUG]:   Finished running start client command
+ → [WARN]:   Failed to kill server: stdout:  stderr:
+ → [WARN]:   Program start_client on host client1 failed:
+        - stdout: Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:00:39.529  WARN cornflakes_libos::state_machine::client: Got past ready check
+Jul 23 19:01:10.067  WARN cornflakes_libos::loadgen::client_threads: About to print out stats for all threads
+port_id: 0, rx_rings; 16, tx_rings: 16
+res: 0
+
+        - stderr: EAL: Detected CPU lcores: 32
+EAL: Detected NUMA nodes: 1
+EAL: Auto-detected process type: PRIMARY
+EAL: Detected shared linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: VFIO support initialized
+EAL: Probe PCI driver: mlx5_pci (15b3:1017) device: 0000:41:00.0 (socket 0)
+mlx5_common: DevX read access NIC register=0X9055 failed errno=121 status=0x3 syndrome=0x54e3a9
+mlx5_common: DevX create q counter set failed errno=121 status=0x2 syndrome=0x8975f1
+TELEMETRY: No legacy callbacks, legacy socket not created
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+MEMPOOL: Maximum number of mempool ops structs exceeded
+Port 0 must be configured before MTU set
+Dev info MTU:1500
+
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.log -> localhost:/mydata/USER/expdata/twitter_redis/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.err.log -> localhost:/mydata/USER/expdata/twitter_redis/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/server.err.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.log -> localhost:/mydata/USER/expdata/twitter_redis/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.err.log -> localhost:/mydata/USER/expdata/twitter_redis/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.err.log
+  -> [XXX.XXX.XXX.XX] scp XXX.XXX.XXX.XX:/mydata/USER/cornflakes_tmp/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.threads.log -> localhost:/mydata/USER/expdata/twitter_redis/cornflakes-dynamic/bufmode_hybridarenaobject/inlinemode_nothing/maxsgsegs_32/copythreshold_512/value_size_twitter/ignore_sets_False/ignore_pps_True/distribution_exponential/min_num_keys_4000000/speed_factor_4.0/1_clients/16_threads/trial_0/client1.threads.log

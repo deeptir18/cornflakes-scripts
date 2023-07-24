@@ -17,8 +17,8 @@ instructions for how to get started with Cornflakes on your own hardware; this
 repo is intended for reproducing the main results.
 
 # Code version and structure
-This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at XXXX commit hash,
-and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and XXXX commit hash.
+This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
+and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `3495f38` commit hash.
 We briefly describe the code structure of Cornflakes below.
 ```
 cornflakes
@@ -138,7 +138,7 @@ variables:
 | Variables | Definition |
 | ---------------- | ------------------------------------------------------------ |
 | `$NUM_CLIENTS` | Number of clients configured in cloudlab profile (e.g., machines named `cornflakes-clientx`) |
-| `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines |
+| `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines; e.g., `cornflakes-client1` or `cornflakes-client2` |
 
 ```
 mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml --machine $MACHINE_NAME
@@ -146,18 +146,18 @@ mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --
 The output of generate-config.yaml should look like so:
 ```
 192.168.1.1 cornflakes-server
-128.110.219.60
+XXX.XXX.XXX.XX
 192.168.1.2 cornflakes-client1
-128.110.219.59
-==> [cornflakes-server: 128.110.219.60] setup ssh connection
-==> [cornflakes-client1: 128.110.219.59] setup ssh connection
-  -> [128.110.219.60]       bash -c "ifconfig | grep -B1 \"192.168.1.1\" | awk '{print $first}'"
-  -> [128.110.219.60]       bash -c "ifconfig ens1f1np1 | grep 'ether'"
-  -> [128.110.219.60]       bash -c "ethtool -i ens1f1np1 | grep 'bus-info'"
+XXX.XXX.XXX.XX
+==> [cornflakes-server: XXX.XXX.XXX.XX] setup ssh connection
+==> [cornflakes-client1: XXX.XXX.XXX.XX] setup ssh connection
+  -> [XXX.XXX.XXX.XX]       bash -c "ifconfig | grep -B1 \"192.168.1.1\" | awk '{print $first}'"
+  -> [XXX.XXX.XXX.XX]       bash -c "ifconfig ens1f1np1 | grep 'ether'"
+  -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f1np1 | grep 'bus-info'"
 ==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: 0c:42:a1:e2:a7:95, pci: 0000:41:00.1, port: 1
-  -> [128.110.219.59]       bash -c "ifconfig | grep -B1 \"192.168.1.2\" | awk '{print $first}'"
-  -> [128.110.219.59]       bash -c "ifconfig ens1f0np0 | grep 'ether'"
-  -> [128.110.219.59]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
+  -> [XXX.XXX.XXX.XX]       bash -c "ifconfig | grep -B1 \"192.168.1.2\" | awk '{print $first}'"
+  -> [XXX.XXX.XXX.XX]       bash -c "ifconfig ens1f0np0 | grep 'ether'"
+  -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: 0c:42:a1:dd:5a:14, pci: 0000:41:00.0, port: 0
 ```
 **Note**: If you are using d6515 machines, please ssh into one of the machines
@@ -269,7 +269,9 @@ cd /mydata/$USER/cornflakes-scripts
 ./twitter-traces-redis.sh
 ```
 
-### Initial expected outputs
+### Initial expected outputs (wait ~5 minutes)
+Something like the output in the [fig 8 sample log](fig8output.log)
+should print after 5 or so minutes (the first trial will have run).
 
 
 ### Expected output location
@@ -283,7 +285,8 @@ paths (these were not reported in the paper).
 
 ## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
 ### Experiment Time (14-15 hours compute, 2-3 min human time)
-This script takes around 14-15 hours to run.
+This script takes around 14-15 hours to run (ignore the time estimate
+immediately printed by the script).
 It runs 6 throughput latency curves (Protobuf, Flatbuffers, Capnproto,
 Cornflakes, and Cornflakes configured to only copy or only zero-copy); each
 curve consists of about 40 throughput latency points and produces both the
@@ -297,8 +300,9 @@ cd /mydata/$USER/cornflakes-scripts
 ./twitter-traces-cfkv.sh
 ```
 
-### Initial expected outputs
-
+### Initial expected outputs (wait ~5 minutes)
+Something like the output in the [fig 7 and 12 sample log](fig7and12output.log)
+should print after 5 or so minutes (the first trial will have run).
 
 ### Expected output location
 | Figure | Filepath |
@@ -324,6 +328,11 @@ cd /mydata/$USER/cornflakes-scripts
 ## run inside tmux or screen
 ./mmtstudy.sh
 ```
+
+### Initial expected outputs (wait ~5 minutes)
+Something like the output in the [fig 5 sample log](fig5output.log)
+should print after 5 or so minutes (the first trial will have run).
+
 
 ### Expected output location
 | Figure | Filepath |
