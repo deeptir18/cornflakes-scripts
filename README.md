@@ -27,9 +27,9 @@ later.
 | Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
 | Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
-| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
-| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
-| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](###(###Failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
+| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
 | (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
 
 
