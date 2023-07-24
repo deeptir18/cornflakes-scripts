@@ -98,9 +98,12 @@ status page); experiments automatically get
 deleted after 16 hours if you're not careful.
 
 
-## Build cornflakes and configuring the machine post-reboot settings
-0. After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
-following (on all nodes). Note that `$USER` refers to your cloudlab username.
+## Build cornflakes and configuring the machine post-reboot settings (about 5-10 minutes)
+0. Clone and build cornflakes (5-7 minutes).
+
+After the cloudlab UI indicates the machines have rebooted, please log into each of the server and client nodes and run the
+following (on all nodes); this builds Cornflakes and the relevant kv-store
+and redis applications within Cornflakes. Note that `$USER` refers to your cloudlab username.
 ```
 ## clone and build cornflakes
 /local/repository/clone_cornflakes.sh
@@ -116,16 +119,20 @@ locations:
 1. Machine settings. On each machine, log in and run the following:
 ```
 ## installs hugetlbfs, required for zero-copy
-sudo /mydata/$USER/cornflakes/install/install-hugepages.sh 7500
+sudo /local/repository/install-hugepages.sh 7500
 ## disables c-states
-sudo /mydata/$USER/cornflakes/install/set_freq.sh
+sudo /local/repository/set_freq.sh
+## increase number of open file descriptors
+/local/respository/ulimit.sh
 ```
 
-2. Configure config file on each machine. To run any cornflakes experiments, Cornflakes requires a config file that
+2. Configure config file on each machine (1 min).
+To run any cornflakes experiments, Cornflakes requires a config file that
    looks like [sample config](sample_config.md). The following python script
 automatically fills in the config file; please do not change the `--outfile`
 argument of the python script, where the experiment bash scripts expect the
-config file will be located. The following table describes the environment
+config file will be located. The script also ensures jumbo frames are
+turned on for the correct interface. The following table describes the environment
 variables:
 
 | Variables | Definition |
@@ -134,7 +141,24 @@ variables:
 | `$MACHINE_NAME` | `cornflakes-server` if the server machine; `cornflakes-clientx` (where x is 1,2,...) for the client machines |
 
 ```
-python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.py --machine $MACHINE_NAME
+mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml --machine $MACHINE_NAME
+```
+The output of generate-config.yaml should look like so:
+```
+192.168.1.1 cornflakes-server
+128.110.219.60
+192.168.1.2 cornflakes-client1
+128.110.219.59
+==> [cornflakes-server: 128.110.219.60] setup ssh connection
+==> [cornflakes-client1: 128.110.219.59] setup ssh connection
+  -> [128.110.219.60]       bash -c "ifconfig | grep -B1 \"192.168.1.1\" | awk '{print $first}'"
+  -> [128.110.219.60]       bash -c "ifconfig ens1f1np1 | grep 'ether'"
+  -> [128.110.219.60]       bash -c "ethtool -i ens1f1np1 | grep 'bus-info'"
+==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: 0c:42:a1:e2:a7:95, pci: 0000:41:00.1, port: 1
+  -> [128.110.219.59]       bash -c "ifconfig | grep -B1 \"192.168.1.2\" | awk '{print $first}'"
+  -> [128.110.219.59]       bash -c "ifconfig ens1f0np0 | grep 'ether'"
+  -> [128.110.219.59]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
+==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: 0c:42:a1:dd:5a:14, pci: 0000:41:00.0, port: 0
 ```
 **Note**: If you are using d6515 machines, please ssh into one of the machines
 and check the interface name of the ssh interface (e.g., the interface listed by
@@ -142,6 +166,26 @@ and check the interface name of the ssh interface (e.g., the interface listed by
 hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
 interface name used by c6525-100g or 25g machines for the SSH interface; for
 d6515 machines, please change this.
+
+
+3. Turn on jumbo frames for the relevant interface on all machines (1 min).
+
+Note from the output of the `generate-config.py` step above, the output that
+looks like the following. This is saying the IP address, mac address, pci address and
+interface name for the experiment interface on each machine.
+```
+==> [cornflakes-server: ('192.168.1.1', 'cornflakes-server')] interface: ens1f1np1, mac: 0c:42:a1:e2:a7:95, pci: 0000:41:00.1, port: 1
+==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: 0c:42:a1:dd:5a:14, pci: 0000:41:00.0, port: 0
+```
+
+On all machines, use the interface name (`$INTERFACE` in the command below) and turn on jumbo frames for each machine (e.g.,
+`ens1f1np1` for cornflakes-server and `ens1f0np0` for the cornflakes-client
+machine)
+```
+# for each machine
+ssh $USER@machine
+sudo ip link set dev $INTERFACE mtu 9000
+```
 
 # Results reproduced overview
 ## Main results reproduced
