@@ -22,7 +22,7 @@ later.
 | Step | Expected Time |
 | ----------------------------------- | -------------------------------------------- |
 | Instantiate cloudlab cluster via cloudlab profile (active). | 4-5 minutes |
-| Wait for machines to instantiate and run install scripts (leave and come back). | 1 hour or so. |
+| Let machines to instantiate and run install scripts (leave and come back). | 1 hour or so. |
 | Reboot each machine after installation scripts have finished running (active). | 2-3 minutes |
 | Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
@@ -96,7 +96,7 @@ immediately.
 worked successfully.
 
 5. The install scripts take about 1 hour to run; they install many libraries
-   from scratch. **Wait for about 1 hour**, until the `Startup` column on the
+   from scratch. **Let this run for about 1 hour**, until the `Startup` column on the
    experiment page indicates the startup is finished. It will look something
    like the following; note one machine is `cornflakes-server` machine and the
    rest are `cornflakes-clientx`.
@@ -143,7 +143,7 @@ sudo /local/repository/install-hugepages.sh 7500
 ## disables c-states
 sudo /local/repository/set_freq.sh
 ## increase number of open file descriptors
-/local/respository/ulimit.sh
+ulimit -n 1048576
 ```
 
 2. Configure config file on each machine (1 min).
@@ -164,13 +164,14 @@ and check the interface name of the ssh interface (e.g., the interface listed by
 `ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xx.xx). `generate-config.py`
 hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
 interface name used by c6525-100g or 25g machines for the SSH interface; for
-d6515 machines, please change this.
+d6515 machines, please change this. You need to change the variable on all
+client and server machines.
 
 
 ```
 mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml
 ```
-The output of generate-config.yaml should look like so:
+The output of generate-config.py should look like so:
 ```
 192.168.1.1 cornflakes-server
 XXX.XXX.XXX.XX
@@ -187,8 +188,12 @@ XXX.XXX.XXX.XX
   -> [XXX.XXX.XXX.XX]       bash -c "ethtool -i ens1f0np0 | grep 'bus-info'"
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
+**Checking the output**: To check if the command ran successfully, check the file at
+`/mydata/$USER/config/cluster_config.py`; particularly ensure the entry at
+`dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.md)
 
-3. Turn on jumbo frames for the relevant interface on all machines (1 min) IF
+
+3. Turn on jumbo frames for the relevant experiment interface on all machines (1 min) IF
    they are not already turned on.
 
 Note from the output of the `generate-config.py` step above, the output that
@@ -199,9 +204,20 @@ interface name for the experiment interface on each machine.
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
 
-On all machines, use the interface name (`$INTERFACE` in the command below) and turn on jumbo frames for each machine (e.g.,
+On all machines, use the interface name (`$INTERFACE` in the command below) and check for and if necessary jumbo frames for each machine (e.g.,
 `ens1f1np1` for cornflakes-server and `ens1f0np0` for the cornflakes-client
-machine)
+machine):
+```
+# for each machine
+ssh $USER@machine
+## CHECK FOR jumbo frames
+ifconfig $INTERFACE | grep -o 'mtu [0-9]*'
+```
+If they are turned on, you will see something like:
+```
+mtu 9000
+```
+If jumbo frames are not turned on:
 ```
 # for each machine
 ssh $USER@machine
@@ -218,6 +234,12 @@ ping 192.168.1.2 # ctrl-c if works
 ping 192.168.1.3
 ## ... and so on.
 ```
+
+5. If at any point you need to power cycles or reboot the nodes, please rerun
+   step 1 (configuring the machine post reboot) and the jumbo frames command if
+   necessary, as well as any steps you have not done (generate config file,
+   clone cornflakes). If you are using d6515 machines, and need to-regenerate the config
+   file, you need to change the SSH_INTERFACE_NAME variable as mentioned in step 2 if you power cycled the machines.
 
 # Results reproduced overview
 ## Main results reproduced
@@ -261,7 +283,7 @@ would do:
 exact rates to use in the throughput latency curve). Changing this changes the
 parameters the experiment will run over.
 
-## Known Issues
+## Issues / things to watch out for
 ### Expected time estimates in script output is wrong
 The python scripts themselves print out the number of trials that will be run,
 current percentage done, and expected time.
@@ -281,6 +303,25 @@ If the script stopped, you can restart it and it will pick off where
 it left off.
 Note that once you restart, the expected time estimates printed inside the
 script may be off.
+
+### Ctrl-c in the middle of the script
+If you ctrl-c while an experiment script runs, the script may not gracefully
+kill the server or client binaries.
+Please run the following before running the binaries again (not that you may not
+need to run all commands; it depends on which experiment you were running).
+```
+# on the server
+sudo pkill -9 redis-server 
+sudo pkill -9 twitter_mlx5
+sudo pkill -9 googleproto_mlx5
+sudo pkill -9 cdn_mlx5
+sudo pkill -9 ycsb_mlx5
+# on the client
+sudo pkill -9 ycsb_dpdk
+sudo pkill -9 cdn_dpdk
+sudo pkill -9 twitter_dpdk
+sudo pkill -9 googleproto_dpdk
+```
 
 # Hello world example (~2-3 minutes)
 ### Instructions
@@ -305,7 +346,7 @@ This script takes about 5-6 hours to run. It runs two throughput latency curves
 each; each point runs for about 30 seconds; however, the server loads the values
 into memory for each point causing each trial to take closer to two minutes.
 
-### Instructions
+### Instructions (run inside tmux or screen)
 ```
 ## ssh into the server node on cloudlab
 ssh $USER@cornflakes-server-IP
@@ -337,7 +378,7 @@ Cornflakes, and Cornflakes configured to only copy or only zero-copy); each
 curve consists of about 40 throughput latency points and produces both the
 baselines comparison results and hybrid comparison result.
 
-### Instructions
+### Instructions (run inside tmux or screen)
 ```
 ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts
@@ -366,7 +407,7 @@ the threshold choice of 512; all vertical
 columns would take a few more days.
 
 
-### Instructions
+### Instructions (run inside tmux or screen)
 ```
 ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts
@@ -394,7 +435,7 @@ this yaml specifies the iterations for recreating the entire heatmap.
 This experiment runs the custom kv store with the google trace on the software
 baselines; it just does the version where the values are lists of 1-8 elements.
 
-### Instructions
+### Instructions (run inside tmux or screen)
 ```
 ssh $user@cornflakes-server-ip
 cd /mydata/$user/cornflakes-scripts
@@ -410,7 +451,7 @@ cd /mydata/$user/cornflakes-scripts
 ## Table 2 (CDN trace, optional)
 ### Experiment Time (3 hours compute, 2-3 min human time)
 
-### Instructions
+### Instructions (run inside tmux or screen)
 ```
 ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts
