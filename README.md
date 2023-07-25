@@ -409,8 +409,8 @@ should print after 5 or so minutes (the first trial will have run).
 ### Expected output location
 | Figure | Filepath |
 | --- | ----------- |
-| Figure 7 (comparing baselines) |`mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
-| Figure 12 (hybrid comparison) |`mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/thresholdvary_p99_cr.pdf` |
+| Figure 7 (comparing baselines) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
+| Figure 12 (hybrid comparison) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/thresholdvary_p99_cr.pdf` |
 
 To see median latency graph, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
