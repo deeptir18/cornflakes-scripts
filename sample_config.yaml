@@ -1,4 +1,4 @@
-ent_port: 12345
+client_port: 12345
 cornflakes_dir: /mydata/USER/cornflakes
 dpdk:
   eal_init:
