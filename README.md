@@ -113,7 +113,9 @@ are ready to use them for experiments!
    run. Therefore, we recommend that you extend the cloudlab experiment for a
 few days to finish the artifact evaluation (press extend on the experiment
 status page); experiments automatically get
-deleted after 16 hours if you're not careful.
+deleted after 16 hours if you're not careful. The following screenshot shows
+where the extend button is.
+![Alt text](cloudlab_extend.png)
 
 
 ## Build cornflakes and configuring the machine post-reboot settings (about 5-10 minutes)
@@ -281,6 +283,19 @@ Note that once you restart, the expected time estimates printed inside the
 script may be off.
 
 # Hello world example (~2-3 minutes)
+### Instructions
+```
+ssh $USER@cornflakes-server-IP
+cd /mydata/$USER/cornflakes-scripts/
+./helloworld.sh
+```
+### Experiment output
+You will see something like [hello world log](helloworld.log) printed. The
+script runs two iterations from the heatmap experiments. Ignore the warnings
+about "one observation" from the graphing portion (not all points have run for a
+full graph). This confirms that the ssh access works, the kv binaries are
+compiled, and the client and server
+can send packets to each other.
 
 # Reproducing results.
 ## Figure 8 (Redis comparison over twitter traces)
