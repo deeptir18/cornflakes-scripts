@@ -338,12 +338,20 @@ cd /mydata/$USER/cornflakes-scripts/
 ./helloworld.sh
 ```
 ### Experiment output
-You will see something like [hello world log](helloworld.log) printed. The
+You will see something like [hello world log](helloworld.log) printed (there may
+be graphing related errors at the top printed, but that is ok to ignore). The
 script runs two iterations from the heatmap experiments. Ignore the warnings
 about "one observation" from the graphing portion (not all points have run for a
 full graph). This confirms that the ssh access works, the kv binaries are
 compiled, and the client and server
 can send packets to each other.
+To check this worked correctly, look at the following file: you should observe a
+csv header and two csv lines, indicating the two trials that ran. The graphing
+didn't work as the graphing scripts assume more data points.
+```
+ssh $USER@cornflakes-server-IP
+cat /mydata/$USER/expdata/helloworld/latencies.log
+```
 
 # Reproducing results.
 ## Figure 8 (Redis comparison over twitter traces)
@@ -370,7 +378,7 @@ should print after 5 or so minutes (the first trial will have run).
 ### Expected output location
 | Figure | Filepath |
 | --- | ----------- |
-| Figure 8 |`/mydata/$USER/expdata/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
+| Figure 8 |`/mydata/$USER/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 
 To see median latency graph, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
