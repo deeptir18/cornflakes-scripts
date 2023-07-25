@@ -192,7 +192,7 @@ XXX.XXX.XXX.XX
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
 **Checking the output**: To check if the command ran successfully, check the file at
-`/mydata/$USER/config/cluster_config.py`; particularly ensure the entry at
+`/mydata/$USER/config/cluster_config.yaml`; particularly ensure the entry at
 `dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.yaml).
 
 
