@@ -207,9 +207,9 @@ interface name for the experiment interface on each machine.
 ==> [cornflakes-client1: ('192.168.1.2', 'cornflakes-client1')] interface: ens1f0np0, mac: XX:XX:XX:XX:XX, pci: 0000:41:00.0, port: 0
 ```
 
-On all machines, use the interface name (`$INTERFACE` in the command below) and check for and if necessary jumbo frames for each machine (e.g.,
-`ens1f1np1` for cornflakes-server and `ens1f0np0` for the cornflakes-client
-machine):
+On all machines, use the interface name (`$INTERFACE` in the command below) (e.g.,
+`ens1f1np1` for cornflakes-server and `ens1f0np0` for the cornflakes-client) from
+the output above, to check for jumbo frames:
 
 ```
 # for each machine
