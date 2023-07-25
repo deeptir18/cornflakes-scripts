@@ -148,7 +148,7 @@ ulimit -n 1048576
 
 2. Configure config file on each machine (1 min).
 To run any cornflakes experiments, Cornflakes requires a config file that
-   looks like [sample config](sample_config.md). The following python script
+   looks like [sample config](sample_config.yaml). The following python script
 automatically fills in the config file; please do not change the `--outfile`
 argument of the python script, where the experiment bash scripts expect the
 config file will be located. The script also ensures jumbo frames are
@@ -190,7 +190,7 @@ XXX.XXX.XXX.XX
 ```
 **Checking the output**: To check if the command ran successfully, check the file at
 `/mydata/$USER/config/cluster_config.py`; particularly ensure the entry at
-`dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.md)
+`dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.yaml)
 
 
 3. Turn on jumbo frames for the relevant experiment interface on all machines (1 min) IF
