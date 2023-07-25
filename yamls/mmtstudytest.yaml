@@ -1,0 +1,9 @@
+num_threads: 16
+num_clients: 1
+num_trials: 1
+serialization_libraries: ["cornflakes-dynamic"]
+rate_percentages: [0.5]
+max_rates:
+        "num_values = 1, num_keys = 1, size = UniformOverSizes-8192": 80000
+        "num_values = 2, num_keys = 1, size = UniformOverSizes-4096": 55000
+
