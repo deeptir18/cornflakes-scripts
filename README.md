@@ -193,7 +193,7 @@ XXX.XXX.XXX.XX
 ```
 **Checking the output**: To check if the command ran successfully, check the file at
 `/mydata/$USER/config/cluster_config.py`; particularly ensure the entry at
-`dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.yaml)
+`dpdk` and `mlx5` are non-empty and look like [sample config](sample_config.yaml).
 
 
 3. Turn on jumbo frames for the relevant experiment interface on all machines (1 min) IF
@@ -245,7 +245,7 @@ ping 192.168.1.3
 5. If at any point you need to power cycles or reboot the nodes, please rerun
    step 1 (configuring the machine post reboot) and the jumbo frames command if
    necessary, as well as any steps you have not done (generate config file,
-   clone cornflakes). If power cycle and are using d6515 machines, and need to-regenerate the config
+   clone cornflakes). If you power cycle and are using d6515 machines, and need to-regenerate the config
    file, you need to change the SSH_INTERFACE_NAME variable in `/local/repository/generate-config.py` as mentioned in step 2 (as the scripts in `/local/repository/` reset).
 
 # Results reproduced overview
