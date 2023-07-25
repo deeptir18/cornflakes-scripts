@@ -10,7 +10,7 @@ The scripts in this repo assume certain filepaths (i.e., cornflakes is located a
 you manually clone cornflakes into a different path, you must change the paths
 in these scripts.
 The traces used in the evaluation are located in a Cloudlab
-long-term dataset; the cloudlab profile mounts the traces one machine and the
+long-term dataset; the cloudlab profile mounts the traces on one machine and the
 setup scripts scp the traces to all machines on startup.
 The main Cornflakes repo contains
 instructions for how to get started with Cornflakes on your own hardware; this
@@ -22,20 +22,20 @@ later.
 | Step | Expected Time |
 | ----------------------------------- | -------------------------------------------- |
 | Instantiate cloudlab cluster via cloudlab profile (active). | 4-5 minutes |
-| Let machines to instantiate and run install scripts (leave and come back). | 1 hour or so. |
+| Let machines to instantiate and run install scripts (leave and come back). | 1 hour or so of waiting. |
 | Reboot each machine after installation scripts have finished running (active). | 2-3 minutes |
 | Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
 | Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
 | Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
 | Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
-| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting. |
 | (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
 
 
 # Code version and structure
 This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
-and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `3495f38` commit hash.
+and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `cbe4266` commit hash.
 We briefly describe the code structure of Cornflakes below.
 ```
 cornflakes
@@ -62,8 +62,10 @@ this dataset.
 ## Hardware
 To run the evaluation, you MUST use a cluster with either d6515, or c6525-100g, or c6525-25g
 nodes in the Cloudlab Utah cluster (the dataset containing the traces is located
-on the Utah cluster); we highly recommend c6525-100g.
-We tested using c6525-100g machines; if you use
+on the Utah cluster); we highly recommend c6525-100g, then d6515, and then c6525-25g.
+Our evaluation in the paper used c6525-100g machines (but the instructions should work on all
+three machine types).
+If you use
 c6525-25g machines (due to 100g machines not being available) you may see different results (lower raw throughputs), because the network bandwidth
 is lower; especially for the reproduction of Figure 5, where the copy-zero-copy
 tradeoff may change.
@@ -73,7 +75,7 @@ The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be
 
 To use the profile:
 
-0. Press "instantiate".
+0. Press "next."
 
 1. Choose values for parameters: the dataset value already points to the dataset
    described above; choose the machine type; and choose the number of clients.
@@ -92,7 +94,7 @@ using the c6525-100g machines, and 1 client is shown below:
 immediately.
 
 4. Wait for 2-3 minutes to ensure the machines are allocated (it helps to have a
-   reservation, as c6525-100g machines are more in demand) and the profile has
+   reservation, as 100g machines are more in demand) and the profile has
 worked successfully.
 
 5. The install scripts take about 1 hour to run; they install many libraries
@@ -143,7 +145,7 @@ sudo /local/repository/install-hugepages.sh 7500
 ## disables c-states
 sudo /local/repository/set_freq.sh
 ## increase number of open file descriptors
-ulimit -n 1048576
+/local/repository/ulimit.sh
 ```
 
 2. Configure config file on each machine (1 min).
@@ -169,6 +171,7 @@ client and server machines.
 
 
 ```
+export NUM_CLIENTS=x
 mkdir -p /mydata/$USER/config && python3 /local/repository/generate-config.py --user $USER --num_clients $NUM_CLIENTS --outfile /mydata/$USER/config/cluster_config.yaml
 ```
 The output of generate-config.py should look like so:
@@ -207,13 +210,16 @@ interface name for the experiment interface on each machine.
 On all machines, use the interface name (`$INTERFACE` in the command below) and check for and if necessary jumbo frames for each machine (e.g.,
 `ens1f1np1` for cornflakes-server and `ens1f0np0` for the cornflakes-client
 machine):
+
 ```
 # for each machine
 ssh $USER@machine
 ## CHECK FOR jumbo frames
+export INTERFACE=<interface> # name printed out by generate-config.py for that machine
 ifconfig $INTERFACE | grep -o 'mtu [0-9]*'
 ```
 If they are turned on, you will see something like:
+
 ```
 mtu 9000
 ```
@@ -221,6 +227,7 @@ If jumbo frames are not turned on:
 ```
 # for each machine
 ssh $USER@machine
+export INTERFACE=<interface> # name printed out by generate-config.py for that machine
 sudo ip link set dev $INTERFACE mtu 9000
 ```
 
@@ -228,7 +235,7 @@ sudo ip link set dev $INTERFACE mtu 9000
    not working, please power cycle the machines again and before doing anything
    else, ensure this works.
 ```
-ssh $USER@cornflakes-server
+ssh $USER@cornflakes-server-IP
 ping 192.168.1.2 # ctrl-c if works
 ## you have more than 1 client
 ping 192.168.1.3
@@ -238,8 +245,8 @@ ping 192.168.1.3
 5. If at any point you need to power cycles or reboot the nodes, please rerun
    step 1 (configuring the machine post reboot) and the jumbo frames command if
    necessary, as well as any steps you have not done (generate config file,
-   clone cornflakes). If you are using d6515 machines, and need to-regenerate the config
-   file, you need to change the SSH_INTERFACE_NAME variable as mentioned in step 2 if you power cycled the machines.
+   clone cornflakes). If power cycle and are using d6515 machines, and need to-regenerate the config
+   file, you need to change the SSH_INTERFACE_NAME variable in `/local/repository/generate-config.py` as mentioned in step 2 (as the scripts in `/local/repository/` reset).
 
 # Results reproduced overview
 ## Main results reproduced
@@ -254,7 +261,7 @@ heatmap takes days to run (but we provide instructions for that as well).
 ## Optional results 
 We have also provided scripts to run the experiments described in Table 2 (CDN
 workload), and Figure 6 (the google workload), but we believe the results listed
-above constitute the core resuls of the paper.
+above constitute the core results of the paper.
 
 ## How results work
 For each figure, we have provided a bash script that invokes the python script
@@ -307,7 +314,7 @@ script may be off.
 ### Ctrl-c in the middle of the script
 If you ctrl-c while an experiment script runs, the script may not gracefully
 kill the server or client binaries.
-Please run the following before running the binaries again (not that you may not
+Please run the following before running the binaries again (note that you may not
 need to run all commands; it depends on which experiment you were running).
 ```
 # on the server
@@ -346,12 +353,12 @@ This script takes about 5-6 hours to run. It runs two throughput latency curves
 each; each point runs for about 30 seconds; however, the server loads the values
 into memory for each point causing each trial to take closer to two minutes.
 
-### Instructions (run inside tmux or screen)
+### Instructions (after ssh'ing, run actual script in tmux or screen)
 ```
 ## ssh into the server node on cloudlab
 ssh $USER@cornflakes-server-IP
-cd /mydata/$USER/cornflakes-scripts
 ## run inside tmux or screen
+cd /mydata/$USER/cornflakes-scripts
 ./twitter-traces-redis.sh
 ```
 
@@ -378,11 +385,12 @@ Cornflakes, and Cornflakes configured to only copy or only zero-copy); each
 curve consists of about 40 throughput latency points and produces both the
 baselines comparison results and hybrid comparison result.
 
-### Instructions (run inside tmux or screen)
+### Instructions (after ssh'ing, run actual script in tmux or screen)
+
 ```
 ssh $USER@cornflakes-server-IP
-cd /mydata/$USER/cornflakes-scripts
 ## run inside tmux or screen
+cd /mydata/$USER/cornflakes-scripts
 ./twitter-traces-cfkv.sh
 ```
 
@@ -406,12 +414,12 @@ the `1024` and `2048` vertical columns of the heatmap in Figure 5 and validates
 the threshold choice of 512; all vertical
 columns would take a few more days.
 
+### Instructions (after ssh'ing, run actual script in tmux or screen)
 
-### Instructions (run inside tmux or screen)
 ```
 ssh $USER@cornflakes-server-IP
-cd /mydata/$USER/cornflakes-scripts
 ## run inside tmux or screen
+cd /mydata/$USER/cornflakes-scripts
 ./mmtstudy.sh
 ```
 
@@ -435,11 +443,11 @@ this yaml specifies the iterations for recreating the entire heatmap.
 This experiment runs the custom kv store with the google trace on the software
 baselines; it just does the version where the values are lists of 1-8 elements.
 
-### Instructions (run inside tmux or screen)
+### Instructions (after ssh'ing, run actual script in tmux or screen)
 ```
-ssh $user@cornflakes-server-ip
-cd /mydata/$user/cornflakes-scripts
+ssh $USER@cornflakes-server-ip
 ## run inside tmux or screen
+cd /mydata/$user/cornflakes-scripts
 ./google-traces.sh
 ```
 
@@ -451,11 +459,11 @@ cd /mydata/$user/cornflakes-scripts
 ## Table 2 (CDN trace, optional)
 ### Experiment Time (3 hours compute, 2-3 min human time)
 
-### Instructions (run inside tmux or screen)
+### Instructions (after ssh'ing, run actual script in tmux or screen)
 ```
 ssh $USER@cornflakes-server-IP
-cd /mydata/$USER/cornflakes-scripts
 ## run inside tmux or screen
+cd /mydata/$USER/cornflakes-scripts
 ./cdn-traces.sh
 ```
 
