@@ -337,6 +337,7 @@ ssh $USER@cornflakes-server-IP
 cd /mydata/$USER/cornflakes-scripts/
 ./helloworld.sh
 ```
+
 ### Experiment output
 You will see something like [hello world log](helloworld.log) printed (there may
 be graphing related errors at the top printed, but that is ok to ignore). The
@@ -348,6 +349,7 @@ can send packets to each other.
 To check this worked correctly, look at the following file: you should observe a
 csv header and two csv lines, indicating the two trials that ran. The graphing
 didn't work as the graphing scripts assume more data points.
+
 ```
 ssh $USER@cornflakes-server-IP
 cat /mydata/$USER/expdata/helloworld/latencies.log
@@ -384,7 +386,7 @@ To see a median latency graph, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
 
 ### Expected Figures (from paper)
-![Alt text](fig8.pdf)
+![Figure 8](fig8.pdf)
 
 
 ## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
@@ -419,8 +421,8 @@ To see median latency graphs, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
 
 ### Expected Figures (from paper)
-![Alt text](fig7.pdf)
-![Alt text](fig12.pdf)
+![Figure 7](fig7.pdf)
+![Figure 12](fig12.pdf)
 
 ## Figure 5 Partial (threshold heatmap)
 ### Experiment Time (23-24 hours compute, 2-3 min human time)
@@ -450,7 +452,7 @@ should print after 5 or so minutes (the first trial will have run).
 
 ### Expected Figure (from paper)
 You should see the two vertical columns of 1024 and 2047 from:
-![Alt text](fig5whole.pdf)
+![Figure 5 whole](fig5whole.pdf)
 
 ### Running the entire Figure 5 (optional)
 If you are interested in recreating the entire Figure 5, modify `mmtstudy.sh`
