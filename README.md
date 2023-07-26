@@ -16,7 +16,7 @@ The main Cornflakes repo contains
 instructions for how to get started with Cornflakes on your own hardware; this
 repo is intended for reproducing the main results.
 Here is an overview of the steps that lead to reproduction along with expected
-time; note you'll need access to a cloudlab account to go through these.
+time; note you'll need access to a cloudlab account to go through these steps.
 Any instructions that say wait indicate you can leave it running and come back
 later.
 | Step | Expected Time |
@@ -28,13 +28,13 @@ later.
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
 | Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
 | Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
-| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, 20 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, ~23 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
 | (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting. |
 | (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
 
 
 # Code version and structure
-This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
+This repository assumes [cornflakes](httpconda install cudatoolkits://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
 and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `cbe4266` commit hash.
 We briefly describe the code structure of Cornflakes below.
 ```
@@ -67,7 +67,7 @@ Our evaluation in the paper used c6525-100g machines (but the instructions shoul
 three machine types).
 If you use
 c6525-25g machines (due to 100g machines not being available) you may see different results (lower raw throughputs), because the network bandwidth
-is lower; especially for the reproduction of Figure 5, where the copy-zero-copy
+is lower, for the reproduction of Figure 5, where the copy-zero-copy
 tradeoff may change.
 
 ## Profile
@@ -163,7 +163,7 @@ variables:
 
 **Note**: If you are using d6515 machines, please ssh into one of the machines
 and check the interface name of the ssh interface (e.g., the interface listed by
-`ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xx.xx). `generate-config.py`
+`ifconfig` that contains the SSH IP for the machine, which will likely be 128.xxx.xxx.xx). `generate-config.py`
 hardcodes the variable `SSH_IP_INTERFACE` near the top of the file to the
 interface name used by c6525-100g or 25g machines for the SSH interface; for
 d6515 machines, please change this. You need to change the variable on all
@@ -380,8 +380,11 @@ should print after 5 or so minutes (the first trial will have run).
 | --- | ----------- |
 | Figure 8 |`/mydata/$USER/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 
-To see median latency graph, replace `p99` with `median` in any of the graph
+To see a median latency graph, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
+
+### Expected Figures (from paper)
+![Alt text](fig8.pdf)
 
 
 ## Figure 7 and 12 (Cornflakes KV, running twitter trace.)
@@ -412,8 +415,12 @@ should print after 5 or so minutes (the first trial will have run).
 | Figure 7 (comparing baselines) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 | Figure 12 (hybrid comparison) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/thresholdvary_p99_cr.pdf` |
 
-To see median latency graph, replace `p99` with `median` in any of the graph
+To see median latency graphs, replace `p99` with `median` in any of the graph
 paths (these were not reported in the paper).
+
+### Expected Figures (from paper)
+![Alt text](fig7.pdf)
+![Alt text](fig12.pdf)
 
 ## Figure 5 Partial (threshold heatmap)
 ### Experiment Time (23-24 hours compute, 2-3 min human time)
@@ -441,6 +448,10 @@ should print after 5 or so minutes (the first trial will have run).
 | --- | ----------- |
 | Figure 5 subset|`/mydata/$USER/expdata/threshold_heatmap/plots/heatmap_anon.pdf` |
 
+### Expected Figure (from paper)
+You should see the two vertical columns of 1024 and 2047 from:
+![Alt text](fig5whole.pdf)
+
 ### Running the entire Figure 5 (optional)
 If you are interested in recreating the entire Figure 5, modify `mmtstudy.sh`
 so the `-lc` argument takes in `-lc /mydata/$GENIUSER/cornflakes-scripts/yamls/fig5.yaml`;
@@ -464,6 +475,9 @@ cd /mydata/$user/cornflakes-scripts
 | --- | ----------- |
 | Figure 6 |`/mydata/$USER/expdata/googleproto_cfkv/plots/max_num_values_8/total_num_keys_1000000/key_size_64/distribution_exponential/baselines_p99_cr.pdf`|
 
+### Expected Figure (from paper)
+![Alt text](fig6.pdf)
+
 ## Table 2 (CDN trace, optional)
 ### Experiment Time (3 hours compute, 2-3 min human time)
 
@@ -482,4 +496,9 @@ for each system; you can use the `format-cdn.sh` bash script in the
 | Figure | Filepath | Format Command |
 | --- | ----------- | -------------- |
  Table 2 | `/mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log` | `/mydata/$USER/cornflakes-scripts/format-cdn.sh /mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log`
+
+### Expected data
+You should see the following data (taken from the paper). The format-cdn script
+divides the numbers by 1000 to get 1000 rps.
+![Alt text](cdn.png)
 
