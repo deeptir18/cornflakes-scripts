@@ -370,7 +370,7 @@ If the issue you ran into is not listed, or the scripts do not continue on after
 restarting, we encourage you to:
 1. Retest ping-ability between the servers. If they can't ping each other, power
    cycle the nodes from cloudlab, and rerun Step 1 from the [post-reboot machine
-   settings](#build-cornflakes-and-configuring-the-machine-post-reboot-settings)
+   settings](#build-cornflakes-and-configuring-the-machine-post-reboot-settings-about-5-10-minutes)
 2. Contact us if you are still having issues retrying the scripts after this.
 
 # Hello world example (~2-3 minutes)
