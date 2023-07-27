@@ -478,7 +478,7 @@ cd /mydata/$user/cornflakes-scripts
 | Figure 6 |`/mydata/$USER/expdata/googleproto_cfkv/plots/max_num_values_8/total_num_keys_1000000/key_size_64/distribution_exponential/baselines_p99_cr.pdf`|
 
 ### Expected Figure (from paper)
-![Alt text](fig6.pdf)
+![Figure 6](fig6.pdf)
 
 ## Table 2 (CDN trace, optional)
 ### Experiment Time (3 hours compute, 2-3 min human time)
