@@ -303,12 +303,12 @@ better.
 ### Failed to ssh
 For the longer running experiments (more than a few hours), the python scripts sometimes fail to ssh and stop running.
 **Restarting the scripts (taking care to kill any process if you
-[ctrl-c](#ctrl-c-in-the-middle-of-the-script) and the script hadn't already
-died) will let the scripts continue on.*** This is why we recommend checking the
-progress of the longer (15-20 hour experiments a couple of times through).
+[ctrl-c](#ctrl-c-in-the-middle-of-the-script) to stop the script manually,
+because it hadn't already died on its on) will let the scripts continue on from where it left off, only picking up on the trials it hadn't done so far.** 
+This is why we recommend checking the
+progress of the longer (15-20 hour experiments) a couple of times through.
 The following snippets show two SSH errors we've encountered with the longer
-running scripts; merely rerunning the scripts (taking care to kill any process
-if [you ctrl-c](# Ctrl-c-in-the-middle-of-the-script) lets you continue.
+running scripts; merely rerunning the scripts  lets you continue.
 One issue has two do with not
 being able to open file descriptors; the other has to do with a socket being
 closed.
@@ -364,6 +364,14 @@ sudo pkill -9 cdn_dpdk
 sudo pkill -9 twitter_dpdk
 sudo pkill -9 googleproto_dpdk
 ```
+
+### Other
+If the issue you ran into is not listed, or the scripts do not continue on after
+restarting, we encourage you to:
+1. Retest ping-ability between the servers. If they can't ping each other, power
+   cycle the nodes from cloudlab, and rerun Step 1 from the [post-reboot machine
+   settings](#build-cornflakes-and-configuring-the-machine-post-reboot-settings)
+2. Contact us if you are still having issues retrying the scripts after this.
 
 # Hello world example (~2-3 minutes)
 ### Instructions
