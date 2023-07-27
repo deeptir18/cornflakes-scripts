@@ -27,8 +27,8 @@ later.
 | Clone repos to each machine, run post-reboot configuration steps, generate cluster configuration files (active). | 5-10 minutes |
 | Run hello-world example to test setup works properly (active). | 5-10 minutes |
 | Replicate Figure 8 (start, and come back). | 2-3 minutes active, 4-5 hours of waiting. |
-| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once halfway through). |
-| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, ~23 hours of waiting (but good to [check](#failed-to-ssh-due-to-not-being-able-to-open-file-descriptor) once or twice through). |
+| Replicate Figures 7 and 12 (start, and come back). | 2-3 minutes active, 14-15 hours of waiting (but good to [check](#failed-to-ssh) once halfway through). |
+| Replicate Figure 5 partially (start, and come back). | 2-3 minutes active, ~23 hours of waiting (but good to [check](#failed-to-ssh) once or twice through). |
 | (Optional) Replicate Figure 6 (start, and come back). | 2-3 minutes active, 3 hours of waiting. |
 | (Optional) Replicate Table 2 (start, and come back). | 2-3 minutes active, 2 hours of waiting. |
 
@@ -300,16 +300,51 @@ the experiment in the middle and it picks up again midway through.
 These estimates were used while developing to schedule/plan out experiments
 better.
 
-### Failed to ssh due to not being able to open file descriptor
+### Failed to ssh
 For the longer running experiments (more than a few hours), the python scripts sometimes fail to ssh and stop running.
-The error is due to the script not being able to open file descriptors
-transiently for the ssh connections.
-Increasing the allowed number of file descriptors on the server machine with `ulimit -n 1048576` should
-help.
-If the script stopped, you can restart it and it will pick off where
-it left off.
-Note that once you restart, the expected time estimates printed inside the
-script may be off.
+**Restarting the scripts (taking care to kill any process if you
+[ctrl-c](#ctrl-c-in-the-middle-of-the-script) and the script hadn't already
+died) will let the scripts continue on.*** This is why we recommend checking the
+progress of the longer (15-20 hour experiments a couple of times through).
+The following snippets show two SSH errors we've encountered with the longer
+running scripts; merely rerunning the scripts (taking care to kill any process
+if [you ctrl-c](# Ctrl-c-in-the-middle-of-the-script) lets you continue.
+One issue has two do with not
+being able to open file descriptors; the other has to do with a socket being
+closed.
+1. OS socket closed:
+```
+Saw 1 exceptions within threads (OSError):
+Thread args: {'kwargs': {'echo': None,
+            'input_': <_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'>,
+            'output': <_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>},
+ 'target': <bound method Runner.handle_stdin of <fabric.runners.Remote object at 0x7f9a66688be0>>}
+Traceback (most recent call last):
+  File "/users/USER/.local/lib/python3.8/site-packages/invoke/util.py", line 237, in run
+    super(ExceptionHandlingThread, self).run()
+  File "/usr/lib/python3.8/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/users/USER/.local/lib/python3.8/site-packages/invoke/runners.py", line 852, in handle_stdin
+    self.write_proc_stdin(data)
+  File "/users/USER/.local/lib/python3.8/site-packages/invoke/runners.py", line 990, in write_proc_stdin
+    self._write_proc_stdin(data.encode(self.encoding))
+  File "/users/USER/.local/lib/python3.8/site-packages/fabric/runners.py", line 67, in _write_proc_stdin
+    return self.channel.sendall(data)
+  File "/users/USER/.local/lib/python3.8/site-packages/paramiko/channel.py", line 844, in sendall
+    sent = self.send(s)
+  File "/users/USER/.local/lib/python3.8/site-packages/paramiko/channel.py", line 799, in send
+    return self._send(s, m)
+  File "/users/USER/.local/lib/python3.8/site-packages/paramiko/channel.py", line 1196, in _send
+    raise socket.error("Socket is closed")
+OSError: Socket is closed
+```
+2. SSH failed due to not being able to open file descriptors:
+```
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+ → [WARN]:   Failed to ssh with host XXX.XXX.XXX.XX, user USER, port 22, key None, err: [Errno 24] Too many open files: '/users/USER/.ssh/id_rsa'
+ → [DEBUG]:   XXX.XXX.XXX.XX USER 22 None
+ → [WARN]:   Failed to ssh with host XXX.XXX.XXX.XX, user USER, port 22, key None, err: [Errno 24] Too many open files: '/etc/invoke.yaml'
+```
 
 ### Ctrl-c in the middle of the script
 If you ctrl-c while an experiment script runs, the script may not gracefully
