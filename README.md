@@ -339,19 +339,25 @@ cd /mydata/$USER/cornflakes-scripts/
 ```
 
 ### Experiment output
-You will see something like [hello world log](helloworld.log) printed (there may
-be graphing related errors at the top printed, but that is ok to ignore). The
-script runs two iterations from the heatmap experiments. Ignore the warnings
-about "one observation" from the graphing portion (not all points have run for a
-full graph). This confirms that the ssh access works, the kv binaries are
-compiled, and the client and server
-can send packets to each other.
-To check this worked correctly, look at the following file: you should observe a
-csv header and two csv lines, indicating the two trials that ran. The graphing
-didn't work as the graphing scripts assume more data points.
+The script runs two trials from the heatmap (Figure 5) experiments.
+The experiment output will indicate 2 iterations (e.g. `Running Iteration 1 out
+of 2...`) and print out command lines that run on each client. After running the
+2 iterations, some graphing errors or warnings will likely be printed, such as:
+```
+Error in `combine_vars()`:
+! Faceting variables must have at least one value
+Backtrace:
+```
 
+Feel free to ignore any of these graphing related errors (the graphing scripts expect more than 2 points, hence
+the errors). 
+To confirm the experiment worked correctly, the file `/mydata/$USER/expdata/helloworld/latencies.log`
+should contain a csv header and two csv lines, indicating the two trials ran.
+Running this successfully indicates ssh access between the machines work, the kv binaries are compiled, the experiment trace data is at the right location, and the client and server can send packets to each other.
+The [sample hello world output](helloworld.log) has an example of some of the standard output that will be printed.
 ```
 ssh $USER@cornflakes-server-IP
+## should be a csv containing a header and two lines
 cat /mydata/$USER/expdata/helloworld/latencies.log
 ```
 
