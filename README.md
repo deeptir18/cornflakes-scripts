@@ -383,10 +383,15 @@ Error in `combine_vars()`:
 ! Faceting variables must have at least one value
 Backtrace:
 ```
+or
+```
+`geom_line()`: Each group consists of only one observation.
+ℹ Do you need to adjust the group aesthetic?
+```
 
-Feel free to ignore any of these graphing related errors (the graphing scripts expect more than 2 points, hence
+**Ignore** any of these graphing related errors (the graphing scripts expect more than 2 points, hence
 the errors). 
-To confirm the experiment worked correctly, the file `/mydata/$USER/expdata/helloworld/latencies.log`
+Instead, to confirm the experiment worked correctly, the file `/mydata/$USER/expdata/helloworld/latencies.log`
 should contain a csv header and two csv lines, indicating the two trials ran.
 Running this successfully indicates ssh access between the machines work, the kv binaries are compiled, the experiment trace data is at the right location, and the client and server can send packets to each other.
 The [sample hello world output](helloworld.log) has an example of some of the standard output that will be printed.
