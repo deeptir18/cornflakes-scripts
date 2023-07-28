@@ -34,26 +34,36 @@ later.
 
 
 # Code version and structure
-This repository assumes [cornflakes](httpconda install cudatoolkits://github.com/deeptir18/cornflakes), on the main branch, at `755edc3` commit hash,
-and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `cbe4266` commit hash.
-We briefly describe the code structure of Cornflakes below.
+This repository assumes [cornflakes](https://github.com/deeptir18/cornflakes), on the main branch, at the `70d1d07` commit hash,
+and the cloudlab profile pointing to [this repository](https://github.com/deeptir18/cornflakes-cloudlab-profile) at main and `778ae9d` commit hash.
+We briefly describe the code structure of Cornflakes below. Since the SOSP
+deadline, the Cornflakes repo has been updated to:
+1. Some edits to the install and experiment scripts, and Makefiles.
+2. Edits to the README.
+3. Include code from another in-progress application integration not featured in
+   the paper.
 ```
 cornflakes
     - cf-kv:  source code for kv store application
     - redis: redis submodule with changes to redis
     - cornflakes-codegen: boilerplate for generating Rust serialization code
-    - cornflakes-libos: common serialization and datapath interface code
+    - cornflakes-libos: common serialization and datapath interface code, server
+      and client interface for state-machine-based applications (like a
+      key-value store)
     - cornflakes-utils: common utilities for running binaries
     - mlx5-datapath: custom datapath built on Mellanox OFED drivers.
     - ice-datapath: custom datapath built on Intel Ice drivers.
     - dpdk-datapath: interface to datapath over DPDK (mainly used for client
       load generators).
+    - mlx5-netperf: submodule pointing to microbenchmark over Mellanox drivers,
+      used for scatter-gather microbenchmarks
 ```
 
 # Cloudlab profile instructions (1 hour machine time, 15-20 minutes human time)
 We have provided a [cloudlab profile](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec) that automaticaly installs and configures
 most of what is needed to run Cornflakes (there is some configuration that must
 be done once the install scripts finish).
+
 ## Dataset
 The cloudlab dataset is at
 `urn:publicid:IDN+utah.cloudlab.us:demeter-pg0+ltdataset+cornflakes-data`; this
@@ -64,11 +74,10 @@ To run the evaluation, you MUST use a cluster with either d6515, or c6525-100g, 
 nodes in the Cloudlab Utah cluster (the dataset containing the traces is located
 on the Utah cluster); we highly recommend c6525-100g, then d6515, and then c6525-25g.
 Our evaluation in the paper used c6525-100g machines (but the instructions should work on all
-three machine types).
-If you use
-c6525-25g machines (due to 100g machines not being available) you may see different results (lower raw throughputs), because the network bandwidth
-is lower, for the reproduction of Figure 5, where the copy-zero-copy
-tradeoff may change.
+three machine types). If you use c6525-25g machines and try to replicate all of
+Figure 5 (rather than the portion provided here), you may see different results
+in the form of lower raw throughputs, because the system may get limited by the
+NIC bandwidth.
 
 ## Profile
 The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again.
@@ -111,7 +120,7 @@ Mellanox drivers. Once the cloudlab UI indicates the machines are rebooted
 are ready to use them for experiments!
 ![Alt text](cloudlab_reboot.png)
 
-7. The results we recommend reproducing take around 5, 14, and 20 hours each to
+7. The results we recommend reproducing take around 5, 14, and 23-24 hours each to
    run. Therefore, we recommend that you extend the cloudlab experiment for a
 few days to finish the artifact evaluation (press extend on the experiment
 status page); experiments automatically get
@@ -138,7 +147,8 @@ locations:
 | cornflakes-scripts | `/mydata/$USER/cornflakes-scripts` |
 | cornflakes-cloudlab-profile | `/local/repository` |
 
-1. Machine settings. On each machine, log in and run the following:
+1. Machine settings. On each machine, log in and run the following (**rerun if you
+   ever power cycle the machine**): 
 ```
 ## installs hugetlbfs, required for zero-copy
 sudo /local/repository/install-hugepages.sh 7500
@@ -246,7 +256,7 @@ ping 192.168.1.3
    step 1 (configuring the machine post reboot) and the jumbo frames command if
    necessary, as well as any steps you have not done (generate config file,
    clone cornflakes). If you power cycle and are using d6515 machines, and need to-regenerate the config
-   file, you need to change the SSH_INTERFACE_NAME variable in `/local/repository/generate-config.py` as mentioned in step 2 (as the scripts in `/local/repository/` reset).
+   file, you need to change the SSH_INTERFACE_NAME variable in `/local/repository/generate-config.py` as mentioned in step 2 (as the scripts in `/local/repository/` are reset).
 
 # Results reproduced overview
 ## Main results reproduced
@@ -254,13 +264,15 @@ We have provided instructions to reproduce Figure 8, Figure 7, Figure 12, and
 part of Figure 5.
 Figure 8 (Redis integration with the twitter trace) and Figure 7 (comparison to
 existing libraries on the twitter trace) show Cornflakes provides gains compared
-to existing software serialization approaches. Figure 12 shows that the hybrid approach offers some gain.
-The portion of Figure 5 validates our current threshold choice of 512; the full
+to existing software serialization approaches on a real-world workload with mixed value sizes.
+Figure 12 shows that the hybrid approach offers some gain.
+The portion of Figure 5 validates our current zero-copy threshold choice of 512; the full
 heatmap takes days to run (but we provide instructions for that as well).
 
 ## Optional results 
 We have also provided scripts to run the experiments described in Table 2 (CDN
-workload), and Figure 6 (the google workload), but we believe the results listed
+workload), and Figure 6 (the google workload), to show Cornflakes' performance
+on traces with mostly small values and only large values, but we believe the results listed
 above constitute the core results of the paper.
 
 ## How results work
@@ -368,10 +380,11 @@ sudo pkill -9 googleproto_dpdk
 ### Other
 If the issue you ran into is not listed, or the scripts do not continue on after
 restarting, we encourage you to:
-1. Retest ping-ability between the servers. If they can't ping each other, power
+1. Retest ping-ability between the servers on the experiment interface. If they can't ping each other, power
    cycle the nodes from cloudlab, and rerun Step 1 from the [post-reboot machine
    settings](#build-cornflakes-and-configuring-the-machine-post-reboot-settings-about-5-10-minutes)
-2. Contact us if you are still having issues retrying the scripts after this.
+2. Contact us if you are still having issues retrying the scripts after this
+   with the specific error message.
 
 # Hello world example (~2-3 minutes)
 ### Instructions
@@ -401,7 +414,7 @@ or
 the errors). 
 Instead, to confirm the experiment worked correctly, the file `/mydata/$USER/expdata/helloworld/latencies.log`
 should contain a csv header and two csv lines, indicating the two trials ran.
-Running this successfully indicates ssh access between the machines work, the kv binaries are compiled, the experiment trace data is at the right location, and the client and server can send packets to each other.
+Running this successfully indicates ssh access between the machines works, the kv binaries are compiled, the experiment trace data is at the right location, and the client and server can send packets to each other.
 The [sample hello world output](helloworld.log) has an example of some of the standard output that will be printed.
 ```
 ssh $USER@cornflakes-server-IP
@@ -436,8 +449,8 @@ should print after 5 or so minutes (the first trial will have run).
 | --- | ----------- |
 | Figure 8 |`/mydata/$USER/expdata/twitter_redis/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 
-To see a median latency graph, replace `p99` with `median` in any of the graph
-paths (these were not reported in the paper).
+To see a median latency graph, replace `p99` with `median` in the graph
+paths (this were not reported in the paper).
 
 ### Expected Figures (from paper)
 ![Figure 8](fig8.pdf)
@@ -471,7 +484,7 @@ should print after 5 or so minutes (the first trial will have run).
 | Figure 7 (comparing baselines) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/baselines_p99_cr.pdf` |
 | Figure 12 (hybrid comparison) |`/mydata/$USER/expdata/twitter_cfkv/plots/min_num_keys_4000000/value_size_0/ignore_sets_False/ignore_pps_True/distribution_exponential/thresholdvary_p99_cr.pdf` |
 
-To see median latency graphs, replace `p99` with `median` in any of the graph
+To see median latency graphs, replace `p99` with `median` in either of the graph
 paths (these were not reported in the paper).
 
 ### Expected Figures (from paper)
@@ -503,9 +516,12 @@ should print after 5 or so minutes (the first trial will have run).
 | Figure | Filepath |
 | --- | ----------- |
 | Figure 5 subset|`/mydata/$USER/expdata/threshold_heatmap/plots/heatmap_anon.pdf` |
+If you would like to see the actual raw throughputs / data behind the heatmap,
+feel free to look at `/mydata/$USER/expdata/threshold_heatmap/latencies-postprocess.log`; this contains the maximum throughput achieved for each square (total packet size and number of segments), for either copy or zero-copy and is how the percent difference on the heatmap was calculated.
+
 
 ### Expected Figure (from paper)
-You should see the two vertical columns of 1024 and 2047 from:
+You should see the two vertical columns of 1024 and 2048 from:
 ![Figure 5 whole](fig5whole.pdf)
 
 ### Running the entire Figure 5 (optional)
@@ -554,7 +570,6 @@ for each system; you can use the `format-cdn.sh` bash script in the
  Table 2 | `/mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log` | `/mydata/$USER/cornflakes-scripts/format-cdn.sh /mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log`
 
 ### Expected data
-You should see the following data (taken from the paper). The format-cdn script
-divides the numbers by 1000 to get 1000 rps.
-![Alt text](cdn.png)
+You should see the following data (taken from the paper). The format-cdn script divides the numbers by 1000 to get 1000 rps.
+![CDN exp](cdn.png)
 
