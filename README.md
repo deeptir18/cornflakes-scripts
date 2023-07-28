@@ -570,6 +570,6 @@ for each system; you can use the `format-cdn.sh` bash script in the
  Table 2 | `/mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log` | `/mydata/$USER/cornflakes-scripts/format-cdn.sh /mydata/$USER/expdata/cdn_cfkv/latencies-postprocess.log`
 
 ### Expected data
-You should see the following data (taken from the paper). The format-cdn script divides the numbers by 1000 to get 1000 rps.
+You should see performance difference/trends similar to the following data (taken from the paper), though perhaps not the same exact raw numbers. The format-cdn script divides the numbers by 1000 to get 1000 rps.
 ![CDN exp](cdn.png)
 
