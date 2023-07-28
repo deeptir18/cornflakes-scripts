@@ -80,7 +80,7 @@ in the form of lower raw throughputs, because the system may get limited by the
 NIC bandwidth.
 
 ## Profile
-The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again.
+The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again. Given the experiments take a while to run (a few days) it helps to have a [cloudlab reservation](https://docs.cloudlab.us/reservations.html) for 2 of either c6525-100g, c6525-25g or d6515 nodes for the entire length of the reservation. Be sure to check the [cluster status](https://www.cloudlab.us/cluster-status.php) page under the Utah cluster to see which node types are free (to see which one to instantiate in the profile) before starting, especially if you don't have a reservation.
 
 To use the profile:
 
@@ -90,7 +90,11 @@ To use the profile:
    described above; choose the machine type; and choose the number of clients.
 All results below just require 1 client. Please click the dropdown for
 `advanced` and click the checkbox next to `No Interswitch Links` (this ensures
-there is only one switch between the client and server machine). A screenshot
+there is only one switch between the client and server machine).
+If you do not click this, you will likely see different results (different
+latencies in the latency-tput graphs) due to the minimum latency between the
+client and server being higher.
+A screenshot
 using the c6525-100g machines, and 1 client is shown below:
 ![Alt text](cloudlab_params.png)
 
@@ -103,8 +107,12 @@ using the c6525-100g machines, and 1 client is shown below:
 immediately.
 
 4. Wait for 2-3 minutes to ensure the machines are allocated (it helps to have a
-   reservation, as 100g machines are more in demand) and the profile has
-worked successfully.
+   reservation, as these machines can be in demand) and the profile has
+worked successfully. If you get an error due to insufficient resources, either
+try again later (with a reservation), or a choose a different available node
+type out of c6525-100g, c6525-25g or d6515. It is possible there are free nodes,
+but they are not on the same switch; you can also try instantiating the profile
+and not clicking interswitch links (and note the results may be different).
 
 5. The install scripts take about 1 hour to run; they install many libraries
    from scratch. **Let this run for about 1 hour**, until the `Startup` column on the
