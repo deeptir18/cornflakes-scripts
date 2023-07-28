@@ -524,6 +524,8 @@ should print after 5 or so minutes (the first trial will have run).
 | Figure | Filepath |
 | --- | ----------- |
 | Figure 5 subset|`/mydata/$USER/expdata/threshold_heatmap/plots/heatmap_anon.pdf` |
+
+
 If you would like to see the actual raw throughputs / data behind the heatmap,
 feel free to look at `/mydata/$USER/expdata/threshold_heatmap/latencies-postprocess.log`; this contains the maximum throughput achieved for each square (total packet size and number of segments), for either copy or zero-copy and is how the percent difference on the heatmap was calculated.
 
