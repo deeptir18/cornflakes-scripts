@@ -70,14 +70,14 @@ The cloudlab dataset is at
 is in the Utah cluster; the default argument in the Cloudlab profile points to
 this dataset.
 ## Hardware
-To run the evaluation, you MUST use a cluster with either d6515, or c6525-100g, or c6525-25g
+To run the evaluation, you MUST use a cluster with either d6515, or c6525-25g
 nodes in the Cloudlab Utah cluster (the dataset containing the traces is located
-on the Utah cluster); we highly recommend c6525-100g, then d6515, and then c6525-25g.
+on the Utah cluster); we highly recommend then d6515, and then c6525-25g.
 Our evaluation in the paper used c6525-100g machines (but the instructions should work on all
 three machine types). If you use c6525-25g machines and try to replicate all of
 Figure 5 (rather than the portion provided here), you may see different results
 in the form of lower raw throughputs, because the system may get limited by the
-NIC bandwidth.
+NIC bandwidth. The profile also allows c6525-100g machines but there is currently a bug in the profile causing the experiment to fail immediately if you choose this machine type; we are investigating this.
 
 ## Profile
 The cloudlab profile is located [here](https://www.cloudlab.us/p/955539a31b0c7be330933414edd8d4af54f7dbec). Please instantiate the profile with the latest `main` default branch. Steps 0-4 should take a couple minutes; Step 5 takes about 1 hour for all the dependencies to install; Step 6 takes another couple minutes to power cycle the machines again. Given the experiments take a while to run (a few days) it helps to have a [cloudlab reservation](https://docs.cloudlab.us/reservations.html) for 2 of either c6525-100g, c6525-25g or d6515 nodes for the entire length of the artifact evaluation until you are finished. Be sure to check the [cluster status](https://www.cloudlab.us/cluster-status.php) page under the Utah cluster to see which node types are free (to see which one to instantiate in the profile) before starting, especially if you don't have a reservation.
